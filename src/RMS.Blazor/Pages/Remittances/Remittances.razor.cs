@@ -27,6 +27,7 @@ using Volo.Abp.AspNetCore.Components.Web.Extensibility.EntityActions;
 using Volo.Abp.AspNetCore.Components.Web.Extensibility.TableColumns;
 using Volo.Abp.BlazoriseUI.Components;
 using static RMS.Enums.Enums;
+using RMS.Customers;
 
 namespace RMS.Blazor.Pages.Remittances
 {
@@ -51,10 +52,13 @@ namespace RMS.Blazor.Pages.Remittances
         IReadOnlyList<CurrencyLookupDto> currencyList = Array.Empty<CurrencyLookupDto>();
 
         IReadOnlyList<CustomerLookupDto> customerList = Array.Empty<CustomerLookupDto>();
+
+
         //IReadOnlyList<UserLookupDto> userList = Array.Empty<UserLookupDto>();
 
         private int CurrentPage { get; set; }
         private string CurrentSorting { get; set; }
+        private string CurrentSortingCustomer { get; set; }
         private int TotalCount { get; set; }
 
 
@@ -65,27 +69,28 @@ namespace RMS.Blazor.Pages.Remittances
         private UpdateRemittanceDto EditingRemittance { get; set; }
 
 
-        private CreateCustomerDto NewCustomer { get; set; }
+        private CreateUpdateCustomerDto NewCustomer { get; set; }
         private Modal CreateSearchCustomerModal { get; set; }
 
 
 
-
-
+        private Modal CreateCustomerModal { get; set; }
         private Modal CreateRemittanceModal { get; set; }
         private Modal EditRemittanceModal { get; set; }
-    
 
 
 
 
+
+        private Validations CreateCustomerValidationsRef;
 
         private Validations CreateValidationsRef;
 
         private Validations EditValidationsRef;
+
         public Remittances()
         {
-            NewCustomer = new CreateCustomerDto();
+            NewCustomer = new CreateUpdateCustomerDto();
             NewRemittance = new CreateRemittanceDto();
             EditingRemittance = new UpdateRemittanceDto();
         }
@@ -125,7 +130,7 @@ namespace RMS.Blazor.Pages.Remittances
             CurrentPage = e.Page - 1;
 
            await  GetRemittancesAsync();
-
+           
             await InvokeAsync(StateHasChanged);
         }
 
@@ -137,18 +142,30 @@ namespace RMS.Blazor.Pages.Remittances
 
 
 
+        private async Task OnDataGridCustomersReadAsync(DataGridReadDataEventArgs<CustomerDto> e_Customer)
+        {
+            CurrentSortingCustomer = e_Customer.Columns
+          .Select(c => c.Field + (c.SortDirection == SortDirection.Descending ? " DESC" : ""))
+          .JoinAsString(",");
+            CurrentPage = e_Customer.Page - 1;
+
+            await GetCustomersAsync();
+
+            await InvokeAsync(StateHasChanged);
+        }
 
 
 
 
         private async Task GetCustomersAsync()
         {
+        
             var result = await CustomerAppService.GetListAsync(
                  new CustomerPagedAndSortedResultRequestDto
                  {
                      MaxResultCount = PageSize,
                      SkipCount = CurrentPage * PageSize,
-                     Sorting = CurrentSorting
+                     Sorting = CurrentSortingCustomer
                  }
              );
 
@@ -171,26 +188,21 @@ namespace RMS.Blazor.Pages.Remittances
 
 
 
-        private async Task OnDataGridReadCustomersAsync(DataGridReadDataEventArgs<CustomerDto> e)
+        private void OpenCreateCustomerModal()
         {
-            CurrentSorting = e.Columns
-      .Select(c => c.Field + (c.SortDirection == SortDirection.Descending ? " DESC" : ""))
-      .JoinAsString(",");
-            CurrentPage = e.Page - 1;
+            CreateValidationsRef.ClearAll();
 
-            await GetCustomersAsync();
+            NewCustomer = new CreateUpdateCustomerDto();
+            CreateCustomerModal.Show();
+            CreateSearchCustomerModal.Hide();
 
-            await InvokeAsync(StateHasChanged);
         }
 
-
-
-      
         private void OpenCreateSearchCustomerModal()
         {
-            //CreateValidationsRef.ClearAll();
+            CreateCustomerValidationsRef.ClearAll();
 
-            NewCustomer = new CreateCustomerDto();
+            NewCustomer = new CreateUpdateCustomerDto();
             CreateSearchCustomerModal.Show();
              CreateRemittanceModal.Hide();
 
@@ -205,9 +217,24 @@ namespace RMS.Blazor.Pages.Remittances
 
 
 
+        private void CloseCreateCustomerModal()
+        {
+            CreateCustomerModal.Hide();
+        }
 
+        private async Task CreateCustomerAsync()
+        {
+            if (await CreateCustomerValidationsRef.ValidateAll())
+            {
 
+                await CustomerAppService.CreateAsync(NewCustomer);
 
+                await CreateCustomerModal.Hide();
+                await GetCustomersAsync();
+
+                await CreateSearchCustomerModal.Show();
+            }
+        }
 
 
 

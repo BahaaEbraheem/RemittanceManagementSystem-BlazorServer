@@ -205,7 +205,10 @@
                         Clicked="CloseCreateSearchCustomerModal">
                     @L["Cancel"]
                 </Button>
-
+                <Button Color="Color.Primary"                     
+                        Clicked="OpenCreateCustomerModal">
+                    @L["NewCustomer"]
+                </Button>
             </ModalFooter>
           </Form>
     </ModalContent>
@@ -225,9 +228,117 @@
 
 
 
+<Modal @ref="CreateCustomerModal" >
+    <ModalContent >
+        <Form>
+            <ModalHeader>
+                <ModalTitle>@L["NewCustomer"]</ModalTitle>
+                <CloseButton Clicked="CloseCreateCustomerModal" />
+            </ModalHeader>
+            <ModalBody>
+                <Validations @ref="@CreateCustomerValidationsRef" Model="@NewCustomer" ValidateOnLoad="false">
 
 
-
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["FirstName"]</FieldLabel>
+                            <TextEdit @bind-Text="@NewCustomer.FirstName">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["LastName"]</FieldLabel>
+                            <TextEdit @bind-Text="@NewCustomer.LastName">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["FatherName"]</FieldLabel>
+                            <TextEdit @bind-Text="@NewCustomer.FatherName">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["MotherName"]</FieldLabel>
+                            <TextEdit @bind-Text="@NewCustomer.MotherName">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["BirthDate"]</FieldLabel>
+                            <DatePicker @bind-Date="@NewCustomer.BirthDate">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </DatePicker>
+                        </Field>
+                    </Validation>
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Phone"]</FieldLabel>
+                            <TextEdit @bind-Text="@NewCustomer.Phone">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Address"]</FieldLabel>
+                            <TextEdit @bind-Text="@NewCustomer.Address">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+                    <Validation MessageLocalizer="@LH.Localize">
+                        <Field>
+                            <FieldLabel>@L["Gender"]</FieldLabel>
+                            <Select TValue="Gender" @bind-SelectedValue="@NewCustomer.Gender">
+                                @foreach (int GenderValue in Enum.GetValues(typeof(Gender)))
+                                {
+                                    <SelectItem TValue="Gender" Value="@((Gender) GenderValue)">
+                                        @L[$"Enum:Gender:{GenderValue}"]
+                                    </SelectItem>
+                                }
+                            </Select>
+                        </Field>
+                    </Validation>
+                </Validations>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Secondary"
+                        Clicked="CloseCreateCustomerModal">
+                    @L["Cancel"]
+                </Button>
+                <Button Color="Color.Primary"
+                        Type="@ButtonType.Submit"
+                        PreventDefaultOnSubmit="true"
+                        Clicked="CreateCustomerAsync">
+                    @L["Save"]
+                </Button>
+            </ModalFooter>
+        </Form>
+    </ModalContent>
+</Modal>
 
 <Modal @ref="CreateRemittanceModal" >
     <ModalContent >
@@ -238,10 +349,6 @@
             </ModalHeader>
             <ModalBody>
                 <Validations @ref="@CreateValidationsRef" Model="@NewRemittance" ValidateOnLoad="false">
-
-
-
-
                        <Validation MessageLocalizer="@LH.Localize">
                         <Field>
                             <FieldLabel>@L["Amount"]</FieldLabel>
@@ -311,8 +418,6 @@
                             </TextEdit>
                         </Field>
                     </Validation>
-                 
-
                 </Validations>
             </ModalBody>
             <ModalFooter>

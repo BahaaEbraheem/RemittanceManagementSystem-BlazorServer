@@ -27,7 +27,6 @@ namespace RMS.Customers.Dtos
         [Required]
 
         public string Phone { get; set; }
-        [Required]
 
         public string Address { get; set; }
         [Required]

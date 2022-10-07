@@ -32,9 +32,9 @@ namespace RMS.Customers
             var dbSet = await GetDbSetAsync();
             var customers= await dbSet
                 .WhereIf(!filter.FirstName.IsNullOrWhiteSpace(), x => x.FirstName.Contains(filter.FirstName))
-                .WhereIf(!filter.LastName.IsNullOrWhiteSpace(), x => x.LastName.ToString().Contains(filter.LastName))
-                .WhereIf(!filter.FatherName.IsNullOrWhiteSpace(), x => x.FatherName.ToString().Contains(filter.FatherName))
-                .WhereIf(!filter.MotherName.IsNullOrWhiteSpace(), x => x.MotherName.ToString().Contains(filter.MotherName))
+                .WhereIf(!filter.LastName.IsNullOrWhiteSpace(), x => x.LastName.Contains(filter.LastName))
+                .WhereIf(!filter.FatherName.IsNullOrWhiteSpace(), x => x.FatherName.Contains(filter.FatherName))
+                .WhereIf(!filter.MotherName.IsNullOrWhiteSpace(), x => x.MotherName.Contains(filter.MotherName))
                 .OrderBy(sorting).Skip(skipCount).Take(maxResultCount).ToListAsync();
             return customers;
 
@@ -45,7 +45,7 @@ namespace RMS.Customers
             var dbSet = await GetDbSetAsync();
             var customers = await dbSet
                 .WhereIf(!filter.FirstName.IsNullOrWhiteSpace(),
-                x => x.FirstName.Contains(filter.FirstName.ToString()))
+                x => x.FirstName.Contains(filter.FirstName))
                 .WhereIf(!filter.LastName.IsNullOrWhiteSpace(),
                 x => x.LastName.Contains(filter.LastName))
                 .WhereIf(!filter.FatherName.IsNullOrWhiteSpace(),
