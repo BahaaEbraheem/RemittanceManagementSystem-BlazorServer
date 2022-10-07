@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\common.props" />
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>RMS</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RMS.Domain\RMS.Domain.csproj" />
+    <ProjectReference Include="..\RMS.Application.Contracts\RMS.Application.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.Account.Application" Version="5.3.4" />
+    <PackageReference Include="Volo.Abp.AutoMapper" Version="5.3.4" />
+    <PackageReference Include="Volo.Abp.Identity.Application" Version="5.3.4" />
+    <PackageReference Include="Volo.Abp.ObjectMapping" Version="5.3.4" />
+    <PackageReference Include="Volo.Abp.PermissionManagement.Application" Version="5.3.4" />
+    <PackageReference Include="Volo.Abp.TenantManagement.Application" Version="5.3.4" />
+    <PackageReference Include="Volo.Abp.FeatureManagement.Application" Version="5.3.4" />
+    <PackageReference Include="Volo.Abp.SettingManagement.Application" Version="5.3.4" />
+  </ItemGroup>
+
+</Project>

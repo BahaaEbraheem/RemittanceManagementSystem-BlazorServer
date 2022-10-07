@@ -1,0 +1,94 @@
+{
+  "culture": "en",
+  "texts": {
+    "Menu:Home": "Home",
+
+
+
+    "Welcome": "Welcome",
+    "LongWelcomeMessage": "Welcome to the application. This is a startup project based on the ABP framework. For more information, visit abp.io.",
+
+    "Currencies": "Currencies",
+
+    "RMS:00001": "There is already an Currency with the same name: {name}",
+    "RMS:00002": "There is already an Customer with the same name: {name}",
+    "RMS:00003": "The customer's date of birth should not be greater than today's date: {birthDate}",
+    "RMS:00004": "The Remittance has been approved, so it cannot be modified",
+
+
+    "CurrencyDeletionConfirmationMessage": "Are you sure to delete the Currency '{0}'?",
+    "CustomerDeletionConfirmationMessage": "Are you sure to delete the Customer '{0}'?",
+    "RemittanceDeletionConfirmationMessage": "Are you sure to delete the Remittance '{0}'?",
+    "AmessageConfirmingThatTheRemittanceIsReady": "Are you sure to Ready the Remittance '{0}'?",
+
+
+    "Permission:RMS": "RMS",
+    "Permission:Currencies": "Currency Management",
+    "Permission:Currencies.Create": "Creating new Currencies",
+    "Permission:Currencies.Edit": "Editing the Currencies",
+    "Permission:Currencies.Delete": "Deleting the Currencies",
+
+    "Permission:Customers": "Customer Management",
+    "Permission:Customers.Create": "Creating new Customer",
+    "Permission:Customers.Edit": "Editing the Customer",
+    "Permission:Customers.Delete": "Deleting the Customer",
+
+    "Permission:Remittances": "Remittance Management",
+    "Permission:Remittances.Create": "Creating new Remittance",
+    "Permission:Remittances.Edit": "Editing the Remittance",
+    "Permission:Remittances.Delete": "Deleting the Remittance",
+
+    "Menu:RMS": "RMS",
+    "Menu:Currencies": "Currencies",
+    "Menu:Customers": "Customers",
+    "Menu:Remittances": "Remittances",
+
+    "Actions": "Actions",
+    "Close": "Close",
+    "Delete": "Delete",
+    "Edit": "Edit",
+    "Name": "Name",
+    "NewCurrency": "New Currency",
+    "Code": "Code",
+    "Type": "Type",
+    "Symbol": "Symbol",
+    "CreationTime": "Creation time",
+    "AreYouSure": "Are you sure?",
+    "AreYouSureToDelete": "Are you sure you want to delete this item?",
+
+
+    "Enum:RemittanceType:1": "Internal",
+    "Enum:RemittanceType:2": "External",
+
+
+    "Enum:Gender:1": "Male",
+    "Enum:Gender:2": "Female",
+
+
+    "Enum:Remittance_Status:1": "Draft",
+    "Enum:Remittance_Status:2": "Ready",
+    "Enum:Remittance_Status:3": "Approved",
+    "Enum:Remittance_Status:4": "Release",
+
+
+    //Customers
+    "FirstName": "FirstName",
+    "LastName": "LastName",
+    "FatherName": "FatherName",
+    "MotherName": "MotherName",
+    "BirthDate": "BirthDate",
+    "Phone": "Phone",
+    "Gender": "Gender",
+    "NewCustomer": "New Customer",
+
+    //Remittances
+    "Remittance": "Remittance",
+    "Remittances": "Remittances",
+    "NewRemittance": "New Remittance",
+    "CreatrorName": "Creatror Name",
+    "PickAnTypeOfRemittance": "Pick An Type Of Remittance",
+    "PickAnCurrency": "Pick An Currency"
+    //Currency
+
+  }
+}
