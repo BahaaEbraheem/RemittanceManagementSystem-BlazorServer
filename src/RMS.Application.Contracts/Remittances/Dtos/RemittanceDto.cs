@@ -17,19 +17,18 @@ namespace RMS.Remittances.Dtos
 
         public Guid? ApprovedBy { get; set; }
 
-        public DateTime ApprovedDate { get; set; }
+        public DateTime? ApprovedDate { get; set; }
         public Guid? ReleasedBy { get; set; }
-        public DateTime ReleasedDate { get; set; }
+        public DateTime? ReleasedDate { get; set; }
 
         public Guid SenderBy { get; set; }
 
         public string SenderName { get; set; }
 
-        public Guid ReceiverBy { get; set; }
+        public Guid? ReceiverBy { get; set; }
         public string ReceiverFullName { get; set; }
         public Guid CurrencyId { get; set; }
         public string CurrencyName { get; set; }
-        //public string CreatrorName { get; set; }
 
 
         public Remittance_Status State { get; set; } 

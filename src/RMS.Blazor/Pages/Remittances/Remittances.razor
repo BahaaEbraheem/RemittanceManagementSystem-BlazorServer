@@ -147,9 +147,10 @@
             
 <DataGrid TItem="CustomerDto"
                       Data="CustomerList"
-                   Filterable
-          FilterMethod="DataGridFilterMethod.StartsWith"
-          Responsive
+                     ReadData="OnDataGridCustomersReadAsync" 
+                     Filterable
+                     FilterMethod="DataGridFilterMethod.StartsWith"
+                     Responsive
                   TotalItems="TotalCount"
                   ShowPager="true"
                   PageSize="PageSize">
@@ -157,7 +158,7 @@
         <DataGridColumn Width="150px"
                                 TItem="CustomerDto"
                                     Field="@nameof(CustomerDto.Id)"
-                                Sortable="false"
+                                Sortable="true"
                                 Caption="@L["Actions"]">
                     <DisplayTemplate>
                         <Dropdown>
@@ -166,9 +167,7 @@
                             </DropdownToggle>
                             <DropdownMenu>
                                     <DropdownItem Clicked="
-                         () =>PassCustomer(context,NewRemittance.Amount,
-                       NewRemittance.ReceiverFullName,NewRemittance.CurrencyId,
-                          NewRemittance.Type)">
+                         () =>PassCustomer(context,NewRemittance)">
                                         @L["Pass"]
                                     </DropdownItem>
 
@@ -359,13 +358,13 @@
                             </NumericEdit>
                         </Field>
                     </Validation>
-                       <Validation MessageLocalizer="@LH.Localize">
                         <Field>
                             <FieldLabel>@L["SenderBy"]</FieldLabel>
-                            <TextEdit Text="@NewRemittance.SenderName" ReadOnly />
+                            <TextEdit @bind-value="@NewRemittance.SenderName" ReadOnly />
+                            <TextEdit hidden @bind-value="@NewRemittance.SenderBy">
+                            </TextEdit>
                         <Button Color="Color.Primary" Clicked="OpenCreateSearchCustomerModal">.....</Button>
                        </Field>
-                    </Validation>
                        <Validation MessageLocalizer="@LH.Localize">
                         <Field>
                             <FieldLabel>@L["Type"]</FieldLabel>

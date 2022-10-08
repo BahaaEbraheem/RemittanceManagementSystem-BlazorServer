@@ -47,7 +47,7 @@ namespace RMS.Blazor.Pages.Remittances
         public string SearchTerm { get; set; }
 
 
-
+        CustomerPagedAndSortedResultRequestDto customerPagedAndSortedResultRequestDto = new CustomerPagedAndSortedResultRequestDto();
 
         IReadOnlyList<CurrencyLookupDto> currencyList = Array.Empty<CurrencyLookupDto>();
 
@@ -59,6 +59,9 @@ namespace RMS.Blazor.Pages.Remittances
         private int CurrentPage { get; set; }
         private string CurrentSorting { get; set; }
         private string CurrentSortingCustomer { get; set; }
+        
+        private int CurrentPageCustomer { get; set; }
+
         private int TotalCount { get; set; }
 
 
@@ -101,7 +104,7 @@ namespace RMS.Blazor.Pages.Remittances
         protected override async Task OnInitializedAsync()
         {
             await GetRemittancesAsync();
-          await GetCustomersAsync();
+          await GetCustomersAsync(customerPagedAndSortedResultRequestDto);
             currencyList = (await RemittanceAppService.GetCurrencyLookupAsync()).Items;
             customerList = (await RemittanceAppService.GetCustomerLookupAsync()).Items;
             //userList = (await RemittanceAppService.GetUserLookupAsync()).Items;
@@ -144,44 +147,74 @@ namespace RMS.Blazor.Pages.Remittances
 
         private async Task OnDataGridCustomersReadAsync(DataGridReadDataEventArgs<CustomerDto> e_Customer)
         {
+            customerPagedAndSortedResultRequestDto = new CustomerPagedAndSortedResultRequestDto();
             CurrentSortingCustomer = e_Customer.Columns
-          .Select(c => c.Field + (c.SortDirection == SortDirection.Descending ? " DESC" : ""))
-          .JoinAsString(",");
-            CurrentPage = e_Customer.Page - 1;
+            .Select(c => c.Field + (c.SortDirection == SortDirection.Descending ? " DESC" : ""))
+            .JoinAsString(",");
+            CurrentPageCustomer = e_Customer.Page - 1;
 
-            await GetCustomersAsync();
-
+            var firstName = e_Customer.Columns.FirstOrDefault(c => c.SearchValue != null && c.Field == "FirstName");
+            if (firstName != null)
+                customerPagedAndSortedResultRequestDto.FirstName = firstName.SearchValue.ToString();
+            var lastName = e_Customer.Columns.FirstOrDefault(c => c.SearchValue != null && c.Field == "LastName");
+            if (lastName != null)
+                customerPagedAndSortedResultRequestDto.LastName = lastName.SearchValue.ToString();
+            var fatherName = e_Customer.Columns.FirstOrDefault(c => c.SearchValue != null && c.Field == "FatherName");
+            if (fatherName != null)
+                customerPagedAndSortedResultRequestDto.FatherName = fatherName.SearchValue.ToString();
+            var motherName = e_Customer.Columns.FirstOrDefault(c => c.SearchValue != null && c.Field == "MotherName");
+            if (motherName != null)
+                customerPagedAndSortedResultRequestDto.MotherName = motherName.SearchValue.ToString();
+            await GetCustomersAsync(customerPagedAndSortedResultRequestDto);
             await InvokeAsync(StateHasChanged);
         }
 
 
 
 
-        private async Task GetCustomersAsync()
+        private async Task GetCustomersAsync(CustomerPagedAndSortedResultRequestDto customerPagedAndSortedResultRequestDto)
         {
-        
-            var result = await CustomerAppService.GetListAsync(
-                 new CustomerPagedAndSortedResultRequestDto
-                 {
-                     MaxResultCount = PageSize,
-                     SkipCount = CurrentPage * PageSize,
-                     Sorting = CurrentSortingCustomer
-                 }
+            PagedResultDto<CustomerDto> result = new PagedResultDto<CustomerDto>();
+            if (customerPagedAndSortedResultRequestDto == null)
+            {
+                result = await CustomerAppService.GetListAsync(
+               new CustomerPagedAndSortedResultRequestDto
+               {
+                   MaxResultCount = PageSize,
+                   SkipCount = CurrentPageCustomer * PageSize,
+                   Sorting = CurrentSortingCustomer
+               }
+           );
+            }
+            else
+            {
+                result = await CustomerAppService.GetListAsync(
+             new CustomerPagedAndSortedResultRequestDto
+             {
+                 FirstName=customerPagedAndSortedResultRequestDto.FirstName,
+                 LastName=customerPagedAndSortedResultRequestDto.LastName,
+                 FatherName=customerPagedAndSortedResultRequestDto.FatherName,
+                 MotherName=customerPagedAndSortedResultRequestDto.MotherName,
+                 MaxResultCount = PageSize,
+                 SkipCount = CurrentPageCustomer * PageSize,
+                 Sorting = CurrentSortingCustomer
+
+             }
              );
 
-            CustomerList = result.Items;
+            }
+          CustomerList = result.Items;
             TotalCount = (int)result.TotalCount;
         }
 
-        private async Task PassCustomer(CustomerDto customerDto, double amount,
-            string receiverFullName,Guid currencyId,RemittanceType type)
+        private async Task PassCustomer(CustomerDto customerDto, CreateRemittanceDto newRemittance)
             
         {
-            NewRemittance = new CreateRemittanceDto() { SenderBy=customerDto.Id,
-            SenderName=customerDto.FirstName+" "+ customerDto.FatherName
-            +" "+ customerDto.LastName,Amount=amount,
-                CurrencyId=currencyId,ReceiverFullName=receiverFullName
-            };
+           await CreateValidationsRef.ClearAll();
+            newRemittance.SenderBy = customerDto.Id;
+            newRemittance.SenderName = customerDto.FirstName + " " + customerDto.FatherName
+            + " " + customerDto.LastName;
+            NewRemittance = newRemittance;
            await CreateSearchCustomerModal.Hide();
             await CreateRemittanceModal.Show();
         }
@@ -230,7 +263,7 @@ namespace RMS.Blazor.Pages.Remittances
                 await CustomerAppService.CreateAsync(NewCustomer);
 
                 await CreateCustomerModal.Hide();
-                await GetCustomersAsync();
+                await GetCustomersAsync(customerPagedAndSortedResultRequestDto);
 
                 await CreateSearchCustomerModal.Show();
             }
@@ -288,9 +321,7 @@ namespace RMS.Blazor.Pages.Remittances
         {
             if (await CreateValidationsRef.ValidateAll())
             {
-
                 await RemittanceAppService.CreateAsync(NewRemittance);
-                
                 await GetRemittancesAsync();
                await CreateRemittanceModal.Hide();
             }

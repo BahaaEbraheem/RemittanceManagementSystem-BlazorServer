@@ -93,7 +93,7 @@ namespace RMS.EntityFrameworkCore
                 b.Property(x => x.ReceiverFullName).IsRequired();
 
                 //one-to-many relationship with IdentityUser table
-                b.HasOne<IdentityUser>().WithMany().HasForeignKey(x => x.CreatorId).IsRequired();
+                b.HasOne<IdentityUser>().WithMany().HasForeignKey(x => x.CreatorId);
                 b.HasOne<IdentityUser>().WithMany().HasForeignKey(x => x.ApprovedBy);
                 b.HasOne<IdentityUser>().WithMany().HasForeignKey(x => x.ReleasedBy);
 
@@ -104,7 +104,7 @@ namespace RMS.EntityFrameworkCore
 
                 //one-to-many relationship with Currency table
 
-                b.HasOne<Currency>().WithMany().HasForeignKey(x => x.CurrencyId);
+                b.HasOne<Currency>().WithMany().HasForeignKey(x => x.CurrencyId).IsRequired();
                 //many-to-many relationship with RemittanceStatus table 
                 b.HasMany(x => x.Status).WithOne().HasForeignKey(x => x.RemittanceId);
 

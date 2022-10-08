@@ -34,6 +34,7 @@ namespace RMS.Blazor
 
 
             CreateMap<RemittanceDto, CreateRemittanceDto>();
+            CreateMap<CreateRemittanceDto, RemittanceDto>();
             CreateMap<RemittanceDto, UpdateRemittanceDto>();
 
 

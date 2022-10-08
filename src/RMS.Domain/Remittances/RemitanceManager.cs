@@ -42,7 +42,7 @@ namespace RMS.Remittances
 
 
         public async Task<Remittance> CreateAsync(double amount, RemittanceType type,
-            string receiverFullName ,DateTime CreationTime,Guid currencyId)
+            string receiverFullName ,DateTime CreationTime,Guid currencyId,Guid senderBy)
         {
             Check.NotNullOrWhiteSpace(amount.ToString(), nameof(amount));
             Check.NotNullOrWhiteSpace(receiverFullName, nameof(receiverFullName));
@@ -62,7 +62,7 @@ namespace RMS.Remittances
                  _currentUser.Id,
                  type,
                 receiverFullName,
-                currencyId
+                currencyId, senderBy
             );
 
            

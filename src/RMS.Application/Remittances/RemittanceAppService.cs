@@ -28,7 +28,7 @@ using RMS.Customers;
 namespace RMS.Remittances
 {
     //[Authorize(RMSPermissions.Remittances.Default)]
-    public class RemittanceAppService: RMSAppService,IRemittanceAppService, ITransientDependency, IValidationEnabled
+    public class RemittanceAppService: RMSAppService,IRemittanceAppService, ITransientDependency
     {
         private readonly IRemittanceRepository _remittanceRepository;
         private readonly RemitanceStatusManager _remittanceStatusManager;
@@ -68,24 +68,18 @@ namespace RMS.Remittances
 
         public async Task<RemittanceDto> CreateAsync(CreateRemittanceDto input)
         {
-
             var remittance = await _remittanceManager.CreateAsync(
                 input.Amount, input.Type,
                 input.ReceiverFullName,
                 input.CreationTime,
-                input.CurrencyId
+                input.CurrencyId,
+                input.SenderBy
             );
-
             await _remittanceRepository.InsertAsync(remittance);
 
             var remittanceStatus = await _remittanceStatusManager.CreateAsync(remittance.Id, Remittance_Status.Draft);
             await _remittanceStatusRepository.InsertAsync(remittanceStatus);
             return ObjectMapper.Map<Remittance, RemittanceDto>(remittance);
-
-
-
-
-
         }
 
         //[Authorize(RMSPermissions.Remittances.Delete)]

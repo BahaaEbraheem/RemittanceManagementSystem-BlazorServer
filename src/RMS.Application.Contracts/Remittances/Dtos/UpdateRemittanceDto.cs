@@ -24,7 +24,7 @@ namespace RMS.Remittances.Dtos
         public DateTime ApprovedDate { get; set; }
         public Guid? ReleasedBy { get; set; }
         public DateTime ReleasedDate { get; set; }
-
+        [Required]
         public Guid SenderBy { get; set; }
         public Guid? ReceiverBy { get; set; }
         [Required]

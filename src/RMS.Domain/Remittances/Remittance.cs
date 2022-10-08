@@ -40,7 +40,7 @@ namespace RMS.Remittances
 
         private Remittance() { }
         public Remittance(Guid id, [NotNull] double amount,Guid? creatorId, RemittanceType type,string receiverFullName
-            ,[NotNull]Guid currencyId) : base(id)
+            ,[NotNull]Guid currencyId,Guid senderBy) : base(id)
         {
             Id = id;
             SerialNumber= SetSerialNum(); 
@@ -50,6 +50,7 @@ namespace RMS.Remittances
             Type = type;
             ReceiverFullName = receiverFullName;
             CurrencyId = currencyId;
+            SenderBy = senderBy;
             Status = new Collection<RemittanceStatus>();
         }
 
