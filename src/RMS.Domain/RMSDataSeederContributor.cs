@@ -1,4 +1,5 @@
-﻿using RMS.Currencies;
+﻿using Microsoft.AspNetCore.Identity;
+using RMS.Currencies;
 using RMS.Customers;
 using RMS.Remittances;
 using System;
@@ -10,6 +11,10 @@ using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Guids;
+using Volo.Abp.Identity;
+using Volo.Abp.Users;
+using IdentityRole = Volo.Abp.Identity.IdentityRole;
+using IdentityUser = Volo.Abp.Identity.IdentityUser;
 
 namespace RMS
 {
@@ -19,23 +24,68 @@ namespace RMS
         private readonly IGuidGenerator _guidGenerator;
         private readonly IRepository<Customer, Guid> _customerRepository;
         private readonly IRepository<Currency, Guid> _currencyRepository;
-        
+        private readonly IRepository<IdentityRole, Guid> _roleRepository;
+        private readonly ICurrentUser _currentUser;
+        private readonly IdentityUserManager _identityUserManager;
+
 
         public RMSDataSeederContributor(
+
             IGuidGenerator guidGenerator,
+            IdentityUserManager identityUserManager,
+            IRepository<IdentityRole, Guid> roleRepository,
             IRepository<Currency, Guid> currencyRepository,
-            IRepository<Customer, Guid> customerRepository
+            IRepository<Customer, Guid> customerRepository,
+            ICurrentUser currentUser
         )
         {
             _guidGenerator = guidGenerator;
             _customerRepository = customerRepository;
-       
-            _currencyRepository = currencyRepository;
+            _identityUserManager = identityUserManager;
+                 _currencyRepository = currencyRepository;
+            _roleRepository = roleRepository;
+            _currentUser = currentUser;
         }
 
         public async Task SeedAsync(DataSeedContext context)
         {
             await SeedCurrenciesAsync();
+            await SeedRolesAsync();
+
+        }
+
+        private async Task SeedRolesAsync()
+        {
+
+            if (await _roleRepository.GetCountAsync() > 1)
+            {
+                return;
+            }
+            await _roleRepository.InsertAsync(
+               new IdentityRole
+               (
+                 _guidGenerator.Create(),
+                  "Creator"
+               ),
+               autoSave: true
+           );
+            await _roleRepository.InsertAsync(
+               new IdentityRole
+               (
+                 _guidGenerator.Create(),
+                  "Supervisor"
+               ),
+               autoSave: true
+           );
+            await _roleRepository.InsertAsync(
+           new IdentityRole
+           (
+             _guidGenerator.Create(),
+              "Releaser"
+           ),
+           autoSave: true
+       );
+
         }
 
         private async Task SeedCurrenciesAsync()

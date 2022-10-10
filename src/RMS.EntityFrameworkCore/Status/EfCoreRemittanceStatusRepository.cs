@@ -20,12 +20,14 @@ namespace RMS.Status
         {
         }
 
-        public  async Task<RemittanceStatus> FindByRemitanceIdAndStateAsync(Guid remitanceId)
+        public  async Task<RemittanceStatus> FindLastStateToThisRemitanceAsync(Guid remitanceId)
         {
             var dbSet = await GetDbSetAsync();
-            return await dbSet.FirstOrDefaultAsync(remittanceStatus => remittanceStatus.RemittanceId == remitanceId );
-        }
 
+            return await dbSet.Where(remittanceStatus => remittanceStatus.RemittanceId == remitanceId)
+                .OrderByDescending(a => a.CreationTime).FirstOrDefaultAsync();
+
+        }
 
     }
 }

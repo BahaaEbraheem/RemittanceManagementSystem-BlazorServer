@@ -81,9 +81,9 @@ namespace RMS.Remittances
             Check.NotNullOrWhiteSpace(amount.ToString(), nameof(amount));
             Check.NotNullOrWhiteSpace(receiverFullName, nameof(receiverFullName));
             Check.NotNullOrWhiteSpace(currencyId.ToString(), nameof(currencyId));
+           
             return remittance;
         }
-
 
 
     }

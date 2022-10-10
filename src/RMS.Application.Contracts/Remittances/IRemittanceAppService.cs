@@ -23,7 +23,7 @@ namespace RMS.Remittances
         Task<ListResultDto<CurrencyLookupDto>> GetCurrencyLookupAsync();
         Task<ListResultDto<CustomerLookupDto>> GetCustomerLookupAsync();
         Task<ListResultDto<UserLookupDto>> GetUserLookupAsync();
-        Task SetReady(Guid id, UpdateRemittanceDto input);
+        Task SetReady(RemittanceDto input);
 
     }
 }

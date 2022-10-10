@@ -14,6 +14,7 @@ namespace RMS.Remittances
         Task<Remittance> FindRemittance_StillDraftAsync(double amount,string receiverName );
         Task<List<Remittance>> GetListAsync(int skipCount, int maxResultCount, string sorting, string filter = null);
         Task<bool> IsApprovedRemittanceAsync(Remittance remittance);
+
     }
    
 }

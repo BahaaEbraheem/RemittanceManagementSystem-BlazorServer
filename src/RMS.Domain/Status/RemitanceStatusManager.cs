@@ -22,11 +22,14 @@ namespace RMS.Status
         private readonly IRemittanceStatusRepository _remittanceStatusRepository;
         private readonly ICurrentUser _currentUser;
 
-        public RemitanceStatusManager(IRemittanceRepository remittanceRepository, ICurrentUser currentUser)
+        public RemitanceStatusManager(IRemittanceRepository remittanceRepository,
+            IRemittanceStatusRepository remittanceStatusRepository, ICurrentUser currentUser)
         {
             _remittanceRepository = remittanceRepository;
+            _remittanceStatusRepository = remittanceStatusRepository;
             _currentUser = currentUser;
         }
+
 
 
 
@@ -43,19 +46,19 @@ namespace RMS.Status
         }
 
 
-        public async Task<RemittanceStatus> UpdateAsync(Guid remittanceId,Remittance_Status newState)
+        public  async Task<RemittanceStatus> UpdateAsync(Guid remittanceId)
         {
             Check.NotNullOrWhiteSpace(remittanceId.ToString(), nameof(remittanceId));
-
-            var ExistRemitanceStatus =  _remittanceStatusRepository.FindByRemitanceIdAndStateAsync(remittanceId).Result;
-            if (ExistRemitanceStatus!=null)
+            //return last record to this remittance from remittanceStatus
+            var LastRemitanceStatusCreation = await _remittanceStatusRepository.FindLastStateToThisRemitanceAsync(remittanceId);
+            if (LastRemitanceStatusCreation == null)
             {
                 throw new ArgumentNullException();
             }
             return  new RemittanceStatus(
                  GuidGenerator.Create(),
-                 remittanceId, newState
-
+                 remittanceId,
+                 LastRemitanceStatusCreation.State
             );
 
         }

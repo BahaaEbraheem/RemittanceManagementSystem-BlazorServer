@@ -10,8 +10,7 @@ namespace RMS.Status
 {
    public interface  IRemittanceStatusRepository:IRepository<RemittanceStatus, Guid>
     {
-        Task<RemittanceStatus> FindByRemitanceIdAndStateAsync(Guid remitanceId);
-        //Task<List<Remittance>> GetListAsync(int skipCount, int maxResultCount, string sorting, string filter = null);
-        //Task<bool> IsApprovedRemittanceAsync(Remittance remittance);
+        Task<RemittanceStatus> FindLastStateToThisRemitanceAsync(Guid remitanceId);
+
     }
 }
