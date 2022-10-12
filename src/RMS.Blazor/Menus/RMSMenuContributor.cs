@@ -20,7 +20,7 @@ namespace RMS.Blazor.Menus
             }
         }
 
-        private Task ConfigureMainMenuAsync(MenuConfigurationContext context)
+        private  Task ConfigureMainMenuAsync(MenuConfigurationContext context)
         {
             var administration = context.Menu.GetAdministration();
             var l = context.GetLocalizer<RMSResource>();
@@ -35,18 +35,34 @@ namespace RMS.Blazor.Menus
                     order: 0
                 )
             );
-            context.Menu.AddItem(
-            new ApplicationMenuItem(
-                 RMSMenus.Home,
-                l["Menu:RMS"],
-                icon: "fa fa-book"
-            ).AddItem(
+           // context.Menu.Items.Insert(
+           //    0,
+           //    new ApplicationMenuItem(
+           //        RMSMenus.RemittancesStatus,
+           //        l["Menu:RemittancesStatus"],
+           //        url: "/status",
+           //        icon: "fas fa-home",
+           //        order: 0
+           //    )
+           //);
+            var RMSMenu = new ApplicationMenuItem(
+            RMSMenus.Home,
+             l["Menu:RMS"],
+             icon: "fa fa-book"
+              );
+
+            context.Menu.AddItem(RMSMenu);
+
+            //CHECK the PERMISSION
+            if ( context.IsGrantedAsync(RMSPermissions.Remittances.Default).Result)
+            {
+                RMSMenu.AddItem(
                 new ApplicationMenuItem(
-                    RMSMenus.Currencies,
-                    l["Menu:Currencies"],
-                    url: "/currencies"
-                )
-            ).AddItem(
+                    RMSMenus.Remittances,
+                    l["Menu:Remittances"],
+                    url: "/remittances"
+                    )
+                ).AddItem(
                 new ApplicationMenuItem(
                     RMSMenus.Customers,
                     l["Menu:Customers"],
@@ -54,13 +70,42 @@ namespace RMS.Blazor.Menus
                 )
             ).AddItem(
                 new ApplicationMenuItem(
-                    RMSMenus.Remittances,
-                    l["Menu:Remittances"],
-                    url: "/remittances"
-                    )
+                    RMSMenus.Currencies,
+                    l["Menu:Currencies"],
+                    url: "/currencies"
                 )
-        );
-           
+            );
+            }
+
+
+
+
+        //    context.Menu.AddItem(
+        //    new ApplicationMenuItem(
+        //         RMSMenus.Home,
+        //        l["Menu:RMS"],
+        //        icon: "fa fa-book"
+        //    ).AddItem(
+        //        new ApplicationMenuItem(
+        //            RMSMenus.Currencies,
+        //            l["Menu:Currencies"],
+        //            url: "/currencies"
+        //        )
+        //    ).AddItem(
+        //        new ApplicationMenuItem(
+        //            RMSMenus.Customers,
+        //            l["Menu:Customers"],
+        //            url: "/customers"
+        //        )
+        //    ).AddItem(
+        //        new ApplicationMenuItem(
+        //            RMSMenus.Remittances,
+        //            l["Menu:Remittances"],
+        //            url: "/remittances"
+        //            )
+        //        )
+        //);
+            
             if (MultiTenancyConsts.IsEnabled)
             {
                 administration.SetSubItemOrder(TenantManagementMenuNames.GroupName, 1);

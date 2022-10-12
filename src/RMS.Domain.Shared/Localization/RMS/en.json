@@ -87,8 +87,12 @@
     "NewRemittance": "New Remittance",
     "CreatrorName": "Creatror Name",
     "PickAnTypeOfRemittance": "Pick An Type Of Remittance",
-    "PickAnCurrency": "Pick An Currency"
+    "PickAnCurrency": "Pick An Currency",
     //Currency
+
+
+
+    "Menu:RemittancesStatus": "Remittances Status"
 
   }
 }

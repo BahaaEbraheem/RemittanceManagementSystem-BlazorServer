@@ -26,6 +26,14 @@
             public const string Edit = Default + ".Edit";
             public const string Delete = Default + ".Delete";
         }
+        public static class Status
+        {
+            public const string Default = GroupName + ".Status";
+            public const string Approved = Default + ".Approved";
+            public const string Released = Default + ".Released";
+            public const string Create = Default + ".Create";
+            public const string Ready = Default + ".Ready";
+        }
         //Add your own permission names. Example:
         //public const string MyPermission1 = GroupName + ".MyPermission1";
     }

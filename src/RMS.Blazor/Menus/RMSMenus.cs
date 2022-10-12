@@ -8,6 +8,7 @@
         public const string Currencies = Prefix + ".Currencies";
         public const string Customers = Prefix + ".Customers";
         public const string Remittances = Prefix + ".Remittances";
+        public const string RemittancesStatus = Prefix + ".RemittancesStatus";
 
         //Add your menu items here...
 

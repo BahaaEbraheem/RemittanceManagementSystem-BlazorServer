@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Text;
 using Volo.Abp.Application.Dtos;
 using static RMS.Enums.Enums;
 
-namespace RMS.Remittances.Dtos
+namespace RMS.Status.Dtos
 {
-   public class RemittanceDto : AuditedEntityDto<Guid>
+    public class RemittanceStatusPagedAndSortedResultRequestDto : PagedAndSortedResultRequestDto
     {
-
+        public Guid RemittanceId { get;  set; }
         public double Amount { get; set; }
 
         public RemittanceType Type { get; set; }
-        public string SerialNumber { get;  set; }
+        public string SerialNumber { get; set; }
 
         public Guid? ApprovedBy { get; set; }
 
@@ -32,9 +31,7 @@ namespace RMS.Remittances.Dtos
         public Guid CurrencyId { get; set; }
         public string CurrencyName { get; set; }
 
-
-        public Remittance_Status State { get; set; } 
-
+        public Remittance_Status State { get; set; }
 
     }
 }

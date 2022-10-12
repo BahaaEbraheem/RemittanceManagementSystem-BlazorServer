@@ -40,6 +40,8 @@ namespace RMS.Remittances.Dtos
         public Guid? ReceiverBy { get; set; }
         [Required]
         public string ReceiverFullName { get; set; }
+        public string ReceiverName { get; set; }
+
         [Required]
         public Guid CurrencyId { get; set; }
 

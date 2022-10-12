@@ -28,7 +28,7 @@ namespace RMS.Currencies
                Customer, //The customer entity
             CustomerDto, //Used to show customers
             Guid, //Primary key of the customer entity
-            PagedAndSortedResultRequestDto, //Used for paging/sorting
+            CustomerPagedAndSortedResultRequestDto, //Used for paging/sorting
             CreateUpdateCustomerDto>, //Used to create/update a customer
         ICustomerAppService //implement the IcustomerAppService
     {

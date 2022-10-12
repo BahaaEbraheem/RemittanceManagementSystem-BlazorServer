@@ -28,6 +28,15 @@ namespace RMS.Permissions
             remittancesPermission.AddChild(RMSPermissions.Remittances.Create, L("Permission:Remittances.Create"));
             remittancesPermission.AddChild(RMSPermissions.Remittances.Edit, L("Permission:Remittances.Edit"));
             remittancesPermission.AddChild(RMSPermissions.Remittances.Delete, L("Permission:Remittances.Delete"));
+
+            var StatusPermission = myGroup.AddPermission(RMSPermissions.Status.Default, L("Permission:Status"));
+            StatusPermission.AddChild(RMSPermissions.Status.Create, L("Permission:Status.Create"));
+            StatusPermission.AddChild(RMSPermissions.Status.Approved, L("Permission:Status.Approved"));
+            StatusPermission.AddChild(RMSPermissions.Status.Ready, L("Permission:Status.Ready"));
+            StatusPermission.AddChild(RMSPermissions.Status.Released, L("Permission:Status.Released"));
+
+
+
         }
 
         private static LocalizableString L(string name)

@@ -7,11 +7,13 @@
 @using RMS.Customers.Dtos
 @using RMS.Localization
 @using Microsoft.Extensions.Localization
-
 @using static RMS.Enums.Enums;
 @inject IStringLocalizer<RMSResource> L
 @inject AbpBlazorMessageLocalizerHelper<RMSResource> LH
 @inherits AbpCrudPageBase<ICustomerAppService, CustomerDto, Guid, CustomerPagedAndSortedResultRequestDto, CreateUpdateCustomerDto>
+
+
+
 <Card>
     <CardHeader>
         <Row Class="justify-content-between">

@@ -11,7 +11,7 @@ namespace RMS.Status
     public interface IRemittanceStatusAppService : ICrudAppService< //Defines CRUD methods
              RemittanceStatusDto, //Used to show currencies
              Guid, //Primary key of the currency entity
-             PagedAndSortedResultRequestDto, //Used for paging/sorting
+             RemittanceStatusPagedAndSortedResultRequestDto, //Used for paging/sorting
              CreateUpdateRemittanceStatusDto> //Used to create/update a currency
     {
 

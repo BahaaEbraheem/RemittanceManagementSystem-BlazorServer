@@ -31,7 +31,6 @@ using System.Collections.Concurrent;
 
 namespace RMS.Remittances
 {
-    [Authorize(RMSPermissions.Remittances.Default)]
     public class RemittanceAppService : RMSAppService, IRemittanceAppService, ITransientDependency
     {
         private readonly IRemittanceRepository _remittanceRepository;
@@ -75,6 +74,7 @@ namespace RMS.Remittances
 
         public async Task<RemittanceDto> CreateAsync(CreateRemittanceDto input)
         {
+        
             var remittance = await _remittanceManager.CreateAsync(
                 input.Amount, input.Type,
                 input.ReceiverFullName,
@@ -149,24 +149,6 @@ namespace RMS.Remittances
             var remittance_Statusqueryable =  _remittanceStatusRepository.GetQueryableAsync().Result.ToList();
             var customerqueryable =  _customerRepository.GetQueryableAsync().Result.ToList();
 
-            //Prepare a query to join remittances and currencies
-
-            //var query = from remittance in remittancequeryable
-            //            join currency in currencyequeryable
-            //            on remittance.CurrencyId equals currency.Id
-            //            join remittance_Status in remittance_Statusqueryable  
-            //            on remittance.Id equals remittance_Status.RemittanceId
-            //            where (remittance_Status.State == Remittance_Status.Draft && roles.Contains("Creator")) ||
-            //             (remittance_Status.State == Remittance_Status.Ready && roles.Contains("Supervisor")) ||
-            //             (remittance_Status.State == Remittance_Status.Approved && roles.Contains("Releaser"))
-            //            join customer in customerqueryable on remittance.SenderBy equals customer.Id
-            //            select new { remittance, currency, remittance_Status, customer };
-
-
-            //var remittanceQyery = from remittance in remittancequeryable
-            //                      group remittance by remittance.Id into remittance_Status
-            //                      select remittance_Status.OrderByDescending(t => t.CreationTime).FirstOrDefault();
-
             var remittanceStatusQyery = from remittance_Status in remittance_Statusqueryable
                                         group remittance_Status by remittance_Status.RemittanceId into remittance_Status
                                         select remittance_Status.OrderByDescending(t => t.CreationTime).FirstOrDefault();
@@ -174,9 +156,11 @@ namespace RMS.Remittances
             var query = from remittance in remittancequeryable
                         join currency in currencyequeryable
                         on remittance.CurrencyId equals currency.Id
-                        join customer in customerqueryable
-                        on remittance.SenderBy equals customer.Id
+                        join senderCustomer in customerqueryable
+                        on remittance.SenderBy equals senderCustomer.Id
 
+                        join receiverCustomer in customerqueryable
+                       on remittance.SenderBy equals receiverCustomer.Id
 
                         join remittanceStatus in remittanceStatusQyery
                         on remittance.Id equals remittanceStatus.RemittanceId
@@ -185,7 +169,7 @@ namespace RMS.Remittances
                          where (remittanceStatus.State == Remittance_Status.Draft && roles.Contains("Creator")) ||
                          (remittanceStatus.State == Remittance_Status.Ready && roles.Contains("Supervisor")) ||
                          (remittanceStatus.State == Remittance_Status.Approved && roles.Contains("Releaser"))
-                        select new { remittance, currency, remittanceStatus, customer };
+                        select new { remittance, currency, remittanceStatus, senderCustomer, receiverCustomer };
 
 
             //Paging
@@ -207,7 +191,8 @@ namespace RMS.Remittances
                 remittanceDto.CurrencyName = _currencyRepository.GetAsync(x.remittance.CurrencyId).Result.Name;
                 //remittanceDto.CreatrorName = x.user.UserName;
                 remittanceDto.State = x.remittanceStatus.State;
-                remittanceDto.SenderName = x.customer.FirstName+"" +x.customer.FatherName+ "" + x.customer.LastName;
+                remittanceDto.SenderName = x.senderCustomer.FirstName+"" +x.senderCustomer.FatherName+ "" + x.senderCustomer.LastName;
+               remittanceDto.ReceiverName = x.receiverCustomer.FirstName + "" + x.receiverCustomer.FatherName + "" + x.receiverCustomer.LastName;
                 return remittanceDto;
             }).ToList();
 
@@ -221,7 +206,6 @@ namespace RMS.Remittances
 
         }
 
-
         //[Authorize(RMSPermissions.Remittances.Edit)]
         public async Task UpdateAsync(Guid id, UpdateRemittanceDto input)
         {
@@ -234,6 +218,7 @@ namespace RMS.Remittances
                 remittance.Type = input.Type;
                 remittance.ReceiverFullName = input.ReceiverFullName;
                 remittance.CurrencyId = input.CurrencyId;
+                remittance.SenderBy=input.SenderBy;
 
             await _remittanceRepository.UpdateAsync(remittance);
 
@@ -241,11 +226,6 @@ namespace RMS.Remittances
             //await _remittanceStatusRepository.UpdateAsync(remittanceStatus);
 
         }
-
-
-
-
-
 
         public async Task SetReady(RemittanceDto input)
         {
@@ -271,6 +251,9 @@ namespace RMS.Remittances
                     remittanceStatus.State = Remittance_Status.Release;
                     remittance.ReleasedBy = CurrentUser.Id;
                     remittance.ReleasedDate = DateTime.Now;
+                    remittance.ReceiverBy = input.ReceiverBy;
+                    remittance.ReceiverFullName = input.ReceiverFullName;
+
                     break;
 
                 default:

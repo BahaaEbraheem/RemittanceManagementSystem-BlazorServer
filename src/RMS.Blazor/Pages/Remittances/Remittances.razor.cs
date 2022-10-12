@@ -32,68 +32,41 @@ using RMS.Permissions;
 
 namespace RMS.Blazor.Pages.Remittances
 {
-    public partial class Remittances 
+    public partial class Remittances
     {
-
-
         [Inject]
         private IReadOnlyList<RemittanceDto> RemittanceList { get; set; }
         [Inject]
         private IReadOnlyList<CustomerDto> CustomerList { get; set; }
         private int PageSize { get; } = LimitedResultRequestDto.DefaultMaxResultCount;
-
         [Parameter]
         public EventCallback<string> OnSearchChanged { get; set; }
-
         public string SearchTerm { get; set; }
-
-
         CustomerPagedAndSortedResultRequestDto customerPagedAndSortedResultRequestDto = new CustomerPagedAndSortedResultRequestDto();
-
         IReadOnlyList<CurrencyLookupDto> currencyList = Array.Empty<CurrencyLookupDto>();
-
-        IReadOnlyList<CustomerLookupDto> customerList = Array.Empty<CustomerLookupDto>();
-
-
-        //IReadOnlyList<UserLookupDto> userList = Array.Empty<UserLookupDto>();
-
         private int CurrentPage { get; set; }
         private string CurrentSorting { get; set; }
         private string CurrentSortingCustomer { get; set; }
-        
         private int CurrentPageCustomer { get; set; }
-
         private int TotalCount { get; set; }
-
-
-     
         private CreateRemittanceDto NewRemittance { get; set; }
-
         private Guid EditingRemittanceId { get; set; }
         private UpdateRemittanceDto EditingRemittance { get; set; }
-
-
         private CreateUpdateCustomerDto NewCustomer { get; set; }
         private Modal CreateSearchCustomerModal { get; set; }
-
-
-
+        private Modal ReleaseRemittanceModal { get; set; }
         private Modal CreateCustomerModal { get; set; }
         private Modal CreateRemittanceModal { get; set; }
         private Modal EditRemittanceModal { get; set; }
-
-
-
-
-
         private Validations CreateCustomerValidationsRef;
-
         private Validations CreateValidationsRef;
-
         private Validations EditValidationsRef;
         private bool CanCreateRemittance { get; set; }
         private bool CanEditRemittance { get; set; }
         private bool CanDeleteRemittance { get; set; }
+        private bool CanApprovedRemittance { get; set; }
+        private bool CanReleaseRemittance { get; set; }
+        private bool CanReadyRemittance { get; set; }
         public Remittances()
         {
             NewCustomer = new CreateUpdateCustomerDto();
@@ -101,17 +74,12 @@ namespace RMS.Blazor.Pages.Remittances
             EditingRemittance = new UpdateRemittanceDto();
         }
 
-
-
-
         protected override async Task OnInitializedAsync()
         {
             await GetRemittancesAsync();
-          await GetCustomersAsync(customerPagedAndSortedResultRequestDto);
+            await GetCustomersAsync(customerPagedAndSortedResultRequestDto);
             currencyList = (await RemittanceAppService.GetCurrencyLookupAsync()).Items;
-            customerList = (await RemittanceAppService.GetCustomerLookupAsync()).Items;
             await SetPermissionsAsync();
-            //userList = (await RemittanceAppService.GetUserLookupAsync()).Items;
         }
         private async Task SetPermissionsAsync()
         {
@@ -123,7 +91,18 @@ namespace RMS.Blazor.Pages.Remittances
 
             CanDeleteRemittance = await AuthorizationService
                 .IsGrantedAsync(RMSPermissions.Remittances.Delete);
+
+
+            CanApprovedRemittance = await AuthorizationService
+                .IsGrantedAsync(RMSPermissions.Status.Approved);
+
+            CanReleaseRemittance = await AuthorizationService
+                .IsGrantedAsync(RMSPermissions.Status.Released);
+            CanReadyRemittance = await AuthorizationService
+             .IsGrantedAsync(RMSPermissions.Status.Ready);
+
         }
+
 
         private async Task GetRemittancesAsync()
         {
@@ -135,7 +114,6 @@ namespace RMS.Blazor.Pages.Remittances
                     Sorting = CurrentSorting
                 }
             );
-
             RemittanceList = result.Items;
             TotalCount = (int)result.TotalCount;
         }
@@ -145,20 +123,9 @@ namespace RMS.Blazor.Pages.Remittances
                 .Select(c => c.Field + (c.SortDirection == SortDirection.Descending ? " DESC" : ""))
                 .JoinAsString(",");
             CurrentPage = e.Page - 1;
-
-           await  GetRemittancesAsync();
-           
+            await GetRemittancesAsync();
             await InvokeAsync(StateHasChanged);
         }
-
-
-
-
-
-
-
-
-
         private async Task OnDataGridCustomersReadAsync(DataGridReadDataEventArgs<CustomerDto> e_Customer)
         {
             customerPagedAndSortedResultRequestDto = new CustomerPagedAndSortedResultRequestDto();
@@ -183,8 +150,19 @@ namespace RMS.Blazor.Pages.Remittances
             await InvokeAsync(StateHasChanged);
         }
 
+        private void OpenReleaseRemittanceModal(RemittanceDto Remittance)
+        {
+            EditValidationsRef.ClearAll();
+            EditingRemittanceId = Remittance.Id;
+            EditingRemittance = ObjectMapper.Map<RemittanceDto, UpdateRemittanceDto>(Remittance);
+            EditingRemittance.ReceiverName = null;
+            ReleaseRemittanceModal.Show();
+        }
 
-
+        private void CloseReleaseRemittanceModal()
+        {
+            ReleaseRemittanceModal.Hide();
+        }
 
         private async Task GetCustomersAsync(CustomerPagedAndSortedResultRequestDto customerPagedAndSortedResultRequestDto)
         {
@@ -205,10 +183,10 @@ namespace RMS.Blazor.Pages.Remittances
                 result = await CustomerAppService.GetListAsync(
              new CustomerPagedAndSortedResultRequestDto
              {
-                 FirstName=customerPagedAndSortedResultRequestDto.FirstName,
-                 LastName=customerPagedAndSortedResultRequestDto.LastName,
-                 FatherName=customerPagedAndSortedResultRequestDto.FatherName,
-                 MotherName=customerPagedAndSortedResultRequestDto.MotherName,
+                 FirstName = customerPagedAndSortedResultRequestDto.FirstName,
+                 LastName = customerPagedAndSortedResultRequestDto.LastName,
+                 FatherName = customerPagedAndSortedResultRequestDto.FatherName,
+                 MotherName = customerPagedAndSortedResultRequestDto.MotherName,
                  MaxResultCount = PageSize,
                  SkipCount = CurrentPageCustomer * PageSize,
                  Sorting = CurrentSortingCustomer
@@ -217,18 +195,17 @@ namespace RMS.Blazor.Pages.Remittances
              );
 
             }
-          CustomerList = result.Items;
+            CustomerList = result.Items;
             TotalCount = (int)result.TotalCount;
         }
 
-        private async Task PassCustomer(CustomerDto customerDto,CreateRemittanceDto newRemittance,UpdateRemittanceDto editingRemittance)
+        private async Task PassCustomer(CustomerDto customerDto, CreateRemittanceDto newRemittance, UpdateRemittanceDto editingRemittance)
         {
             await CreateValidationsRef.ClearAll();
             await EditValidationsRef.ClearAll();
-            //Check If Pass CreateRemittanceDto Or UpdateRemittanceDto
-            if (string.IsNullOrWhiteSpace(editingRemittance.SenderName))
+            //Check If Pass CreateRemittanceModal Or UpdateRemittanceModal Or ReleaseRemittanceModal
+            if (string.IsNullOrWhiteSpace(editingRemittance.SenderName) && CanCreateRemittance)
             {
-
                 newRemittance.SenderBy = customerDto.Id;
                 newRemittance.SenderName = customerDto.FirstName + " " + customerDto.FatherName
                 + " " + customerDto.LastName;
@@ -236,20 +213,29 @@ namespace RMS.Blazor.Pages.Remittances
                 await CreateSearchCustomerModal.Hide();
                 await CreateRemittanceModal.Show();
             }
-            else
+            else if (!string.IsNullOrWhiteSpace(editingRemittance.SenderName) && CanEditRemittance)
             {
                 editingRemittance.SenderBy = customerDto.Id;
                 editingRemittance.SenderName = customerDto.FirstName + " " + customerDto.FatherName
                 + " " + customerDto.LastName;
-                NewRemittance = newRemittance;
+                EditingRemittance = editingRemittance;
                 await CreateSearchCustomerModal.Hide();
                 await EditRemittanceModal.Show();
             }
-     
+            else if (!string.IsNullOrWhiteSpace(editingRemittance.SenderName) && CanReleaseRemittance)
+            {
+                editingRemittance.ReceiverBy = customerDto.Id;
+                editingRemittance.ReceiverFullName = customerDto.FirstName + " " + customerDto.FatherName
+                + " " + customerDto.LastName;
+                editingRemittance.ReceiverName = customerDto.FirstName + " " + customerDto.FatherName
+                + " " + customerDto.LastName;
+                EditingRemittance = editingRemittance;
+                await CreateSearchCustomerModal.Hide();
+                await ReleaseRemittanceModal.Show();
+            }
+
 
         }
-
-
 
         private void OpenCreateCustomerModal()
         {
@@ -261,25 +247,35 @@ namespace RMS.Blazor.Pages.Remittances
 
         }
 
+        private void OpenCreateSearchCustomerModalForReleaser()
+        {
+            CreateCustomerValidationsRef.ClearAll();
+            NewCustomer = new CreateUpdateCustomerDto();
+            if (CanReleaseRemittance)
+            {
+
+                CreateSearchCustomerModal.Show();
+                ReleaseRemittanceModal.Hide();
+            }
+        }
         private void OpenCreateSearchCustomerModal()
         {
             CreateCustomerValidationsRef.ClearAll();
-
             NewCustomer = new CreateUpdateCustomerDto();
-            CreateSearchCustomerModal.Show();
-             CreateRemittanceModal.Hide();
-            EditRemittanceModal.Hide();
+            if (CanCreateRemittance)
+            {
+                CreateSearchCustomerModal.Show();
+                CreateRemittanceModal.Hide();
+                EditRemittanceModal.Hide();
+            }
+
 
         }
 
         private void CloseCreateSearchCustomerModal()
         {
             CreateSearchCustomerModal.Hide();
-            //CreateRemittanceModal.Show();
         }
-
-
-
 
         private void CloseCreateCustomerModal()
         {
@@ -300,14 +296,6 @@ namespace RMS.Blazor.Pages.Remittances
             }
         }
 
-
-
-
-
-
-
-
-
         private void OpenCreateRemittanceModal()
         {
             CreateValidationsRef.ClearAll();
@@ -315,7 +303,6 @@ namespace RMS.Blazor.Pages.Remittances
             NewRemittance = new CreateRemittanceDto();
             CreateRemittanceModal.Show();
         }
-
 
         private void CloseCreateRemittanceModal()
         {
@@ -325,7 +312,6 @@ namespace RMS.Blazor.Pages.Remittances
         private void OpenEditRemittanceModal(RemittanceDto Remittance)
         {
             EditValidationsRef.ClearAll();
-
             EditingRemittanceId = Remittance.Id;
             EditingRemittance = ObjectMapper.Map<RemittanceDto, UpdateRemittanceDto>(Remittance);
             EditRemittanceModal.Show();
@@ -354,13 +340,25 @@ namespace RMS.Blazor.Pages.Remittances
             {
                 await RemittanceAppService.CreateAsync(NewRemittance);
                 await GetRemittancesAsync();
-               await CreateRemittanceModal.Hide();
+                await CreateRemittanceModal.Hide();
             }
         }
         private async Task UpdateRemittanceToReadyAsync(RemittanceDto Remittance)
         {
             await RemittanceAppService.SetReady(Remittance);
             await GetRemittancesAsync();
+
+        }
+        private async Task UpdateRemittanceToReleaseAsync(Guid editingRemittanceId, UpdateRemittanceDto updateRemittance)
+        {
+            RemittanceDto remittance = ObjectMapper.Map<UpdateRemittanceDto, RemittanceDto>(updateRemittance);
+            if (editingRemittanceId.Equals(null))
+                throw new ArgumentNullException(nameof(editingRemittanceId));
+            remittance.Id = editingRemittanceId;
+            await RemittanceAppService.SetReady(remittance);
+            await GetRemittancesAsync();
+            await ReleaseRemittanceModal.Hide();
+
 
         }
         private async Task UpdateRemittanceAsync(UpdateRemittanceDto editingRemittance)
@@ -374,6 +372,6 @@ namespace RMS.Blazor.Pages.Remittances
             }
         }
 
-      
+
     }
 }

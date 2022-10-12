@@ -46,9 +46,10 @@ namespace RMS.Remittances
         {
             Check.NotNullOrWhiteSpace(amount.ToString(), nameof(amount));
             Check.NotNullOrWhiteSpace(receiverFullName, nameof(receiverFullName));
+
             if (string.IsNullOrEmpty(Enum.GetName(type)))
             {
-                throw new ArgumentException(Enum.GetName(type), "fill Type");
+                    type = RemittanceType.Internal;
             }
             //هل تم انشاء حوالة مسودة من قبل
             var existingDraftRemittance = await _remittanceRepository.FindRemittance_StillDraftAsync(amount, receiverFullName);

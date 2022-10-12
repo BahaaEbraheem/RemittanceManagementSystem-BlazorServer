@@ -9,7 +9,7 @@ namespace RMS.Status.Dtos
 {
     public class RemittanceStatusDto : AuditedEntityDto<Guid>
     {
-        public Guid RemittanceId { get; protected set; }
+        public Guid RemittanceId { get;  set; }
         public Remittance_Status State { get; set; }
 
 
