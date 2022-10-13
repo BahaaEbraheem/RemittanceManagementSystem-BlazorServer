@@ -13,7 +13,7 @@ namespace RMS.Remittances
         Task<RemittanceDto> GetAsync(Guid id);
 
         Task<PagedResultDto<RemittanceDto>> GetListAsync(GetRemittanceListDto input);
-
+        Task<PagedResultDto<RemittanceDto>> GetListRemittancesStatusAsync(GetRemittanceListDto input);
         Task<RemittanceDto> CreateAsync(CreateRemittanceDto input);
 
         Task UpdateAsync(Guid id, UpdateRemittanceDto input);

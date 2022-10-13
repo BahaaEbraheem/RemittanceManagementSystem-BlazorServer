@@ -1,0 +1,75 @@
+﻿@page "/remittancesstatus"
+
+@using Volo.Abp.MultiTenancy
+@using RMS.Remittances
+@using RMS.Remittances.Dtos
+@using Volo.Abp.AspNetCore.Components
+@using Volo.Abp.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web
+@using Volo.Abp.Application.Dtos
+@using Microsoft.Extensions.Localization
+@using Blazorise
+@using RMS.Localization
+@inherits RMSComponentBase
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@using Microsoft.AspNetCore.Authorization
+@inject AbpBlazorMessageLocalizerHelper<RMSResource> LH
+@inject IStringLocalizer<RMSResource> L
+@inject IRemittanceAppService RemittanceAppService
+
+<Card>
+        <CardHeader>
+        <Row Class="justify-content-between">
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <h2>@L["Remittances"]</h2>
+            </Column>
+            <Column ColumnSize="ColumnSize.IsAuto">
+               
+            </Column>
+        </Row>
+    </CardHeader>
+
+    <CardBody>
+        <DataGrid TItem="RemittanceDto"
+                  Data="RemittanceList"
+                  Filterable="true"
+                  ReadData="OnDataGridReadAsync"
+                  TotalItems="TotalCount"
+                  ShowPager="true"
+                  PageSize="PageSize">
+                  
+            <DataGridColumns>
+                <DataGridColumn TItem="RemittanceDto"
+                                Field="@nameof(RemittanceDto.SerialNumber)"
+                                Caption="@L["SerialNumber"]"></DataGridColumn>
+                <DataGridColumn TItem="RemittanceDto"
+                                Field="@nameof(RemittanceDto.Amount)"
+                                Caption="@L["Amount"]"></DataGridColumn>
+                <DataGridColumn TItem="RemittanceDto"
+                                Field="@nameof(RemittanceDto.ReceiverFullName)"
+                                Caption="@L["ReceiverFullName"]"></DataGridColumn>
+                <DataGridColumn TItem="RemittanceDto"
+                Field="@nameof(RemittanceDto.CurrencyName)"
+                                Caption="@L["Currency"]"></DataGridColumn>
+                <DataGridColumn TItem="RemittanceDto"
+             Field="@nameof(RemittanceDto.SenderName)"
+                                Caption="@L["SenderName"]"></DataGridColumn>
+                <DataGridColumn TItem="RemittanceDto"
+                                Field="@nameof(RemittanceDto.CreationTime)"
+                                Caption="@L["CreationTime"]">
+    <DisplayTemplate>
+                        @context.CreationTime.ToString()
+                    </DisplayTemplate>
+                </DataGridColumn>
+                <DataGridColumn TItem="RemittanceDto"
+                Field="@nameof(RemittanceDto.State)"
+                                Caption="@L["State"]">
+                                <DisplayTemplate>
+              
+                        @L[$"Enum:Remittance_Status:{(int)context.State}"]
+                    </DisplayTemplate>
+                            </DataGridColumn>
+            </DataGridColumns>
+        </DataGrid>
+    </CardBody>
+</Card>

@@ -35,16 +35,16 @@ namespace RMS.Blazor.Menus
                     order: 0
                 )
             );
-           // context.Menu.Items.Insert(
-           //    0,
-           //    new ApplicationMenuItem(
-           //        RMSMenus.RemittancesStatus,
-           //        l["Menu:RemittancesStatus"],
-           //        url: "/status",
-           //        icon: "fas fa-home",
-           //        order: 0
-           //    )
-           //);
+            context.Menu.Items.Insert(
+               0,
+               new ApplicationMenuItem(
+                   RMSMenus.RemittancesStatus,
+                   l["Menu:RemittancesStatus"],
+                   url: "/remittancesstatus",
+                   icon: "fas fa-home",
+                   order: 0
+               )
+           );
             var RMSMenu = new ApplicationMenuItem(
             RMSMenus.Home,
              l["Menu:RMS"],
@@ -77,34 +77,6 @@ namespace RMS.Blazor.Menus
             );
             }
 
-
-
-
-        //    context.Menu.AddItem(
-        //    new ApplicationMenuItem(
-        //         RMSMenus.Home,
-        //        l["Menu:RMS"],
-        //        icon: "fa fa-book"
-        //    ).AddItem(
-        //        new ApplicationMenuItem(
-        //            RMSMenus.Currencies,
-        //            l["Menu:Currencies"],
-        //            url: "/currencies"
-        //        )
-        //    ).AddItem(
-        //        new ApplicationMenuItem(
-        //            RMSMenus.Customers,
-        //            l["Menu:Customers"],
-        //            url: "/customers"
-        //        )
-        //    ).AddItem(
-        //        new ApplicationMenuItem(
-        //            RMSMenus.Remittances,
-        //            l["Menu:Remittances"],
-        //            url: "/remittances"
-        //            )
-        //        )
-        //);
             
             if (MultiTenancyConsts.IsEnabled)
             {
