@@ -12,7 +12,7 @@ using Volo.Abp.Domain.Repositories.EntityFrameworkCore;
 
 namespace RMS.Currencies
 {
-    public class EfCoreCurrencyRepository: EfCoreRepository<RMSDbContext, Currency, Guid>,ICurrencyRepository
+    public class EfCoreCurrencyRepository : EfCoreRepository<RMSDbContext, Currency, Guid>, ICurrencyRepository
     {
         public EfCoreCurrencyRepository(
             IDbContextProvider<RMSDbContext> dbContextProvider)
@@ -23,23 +23,19 @@ namespace RMS.Currencies
         public async Task<Currency> FindByNameAndSymbolAsync(string name, string symbol)
         {
             var dbSet = await GetDbSetAsync();
-            return await dbSet.FirstOrDefaultAsync(Currency => Currency.Name == name || Currency.Symbol == symbol);
+            var firstCondition =  dbSet.FirstOrDefaultAsync(Currency => Currency.Name.Equals(name)
+           && Currency.Symbol.Equals(symbol) ).Result;
+            if (firstCondition != null)
+                return firstCondition;
+            var existCurrency=  dbSet.FirstOrDefaultAsync(Currency =>
+            (Currency.Name.Contains(name))
+            && (Currency.Symbol.Contains(symbol))).Result;
+            if (existCurrency!=null)
+            return existCurrency;
+            return null;
         }
 
-        //public async Task<List<Currency>> GetListAsync(int skipCount,int maxResultCount,string sorting,string filter = null)
-        //{
-        //    var dbSet = await GetDbSetAsync();
-        //    return await dbSet
-        //        .WhereIf(
-        //            !filter.IsNullOrWhiteSpace(),
-        //            Currency => Currency.Name.Contains(filter)
-        //         )
-        //        .OrderBy(sorting)
-        //        .Skip(skipCount)
-        //        .Take(maxResultCount)
-        //        .ToListAsync();
-        //}
-
+        
         public async Task<List<Currency>> GetListAsync(int skipCount, int maxResultCount, string sorting, Currency filter)
         {
             var dbSet = await GetDbSetAsync();

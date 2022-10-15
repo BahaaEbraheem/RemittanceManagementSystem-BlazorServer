@@ -1,6 +1,4 @@
-﻿
-
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using RMS.Currencies;
 using Blazorise.DataGrid;
@@ -10,11 +8,36 @@ using RMS.Currencies.Dtos;
 using RMS.Remittances.Dtos;
 using RMS.Remittances;
 using Microsoft.CodeAnalysis;
+using Microsoft.AspNetCore.Authorization;
+using RMS.Customers.Dtos;
+using RMS.Permissions;
 
 namespace RMS.Blazor.Pages.Currencies
 {
     public partial class Currencies
     {
+        private bool CanCreateCurrency { get; set; }
+        private bool CanEditCurrency { get; set; }
+        private bool CanDeleteCurrency { get; set; }
+
+        protected override async Task OnInitializedAsync()
+        {
+            await SetPermissions();
+        }
+        private async Task SetPermissions()
+        {
+            CanCreateCurrency = await AuthorizationService
+                .IsGrantedAsync(RMSPermissions.Currencies.Create);
+
+            CanEditCurrency = await AuthorizationService
+                .IsGrantedAsync(RMSPermissions.Currencies.Edit);
+
+            CanDeleteCurrency = await AuthorizationService
+                .IsGrantedAsync(RMSPermissions.Currencies.Delete);
+
+        }
+
+
         protected override Task UpdateGetListInputAsync() 
         {  
             if 

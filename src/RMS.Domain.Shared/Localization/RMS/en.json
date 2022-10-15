@@ -14,7 +14,7 @@
     "RMS:00002": "There is already an Customer with the same name: {name}",
     "RMS:00003": "The customer's date of birth should not be greater than today's date: {birthDate}",
     "RMS:00004": "The Remittance has been approved, so it cannot be modified",
-
+    "RMS:00005": "This Currency Already Used In Remittance : {remittanceSerial} ",
 
     "CurrencyDeletionConfirmationMessage": "Are you sure to delete the Currency '{0}'?",
     "CustomerDeletionConfirmationMessage": "Are you sure to delete the Customer '{0}'?",

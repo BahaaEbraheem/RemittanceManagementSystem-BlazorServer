@@ -12,11 +12,34 @@ using RMS.Remittances;
 using Microsoft.CodeAnalysis;
 using System;
 using Volo.Abp.BlazoriseUI;
+using RMS.Permissions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RMS.Blazor.Pages.Customers
 {
     public partial class Customers 
     {
+
+        private bool CanCreateCustomer { get; set; }
+        private bool CanEditCustomer { get; set; }
+        private bool CanDeleteCustomer { get; set; }
+
+        protected override async Task OnInitializedAsync()
+        {
+            await SetPermissions();
+        }
+        private async Task SetPermissions()
+        {
+            CanCreateCustomer = await AuthorizationService
+                .IsGrantedAsync(RMSPermissions.Customers.Create);
+
+            CanEditCustomer = await AuthorizationService
+                .IsGrantedAsync(RMSPermissions.Customers.Edit);
+
+            CanDeleteCustomer = await AuthorizationService
+                .IsGrantedAsync(RMSPermissions.Customers.Delete);
+
+        }
         protected override Task UpdateGetListInputAsync() 
         {  
             if 

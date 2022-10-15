@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using Blazorise.Bootstrap5;
@@ -203,6 +204,7 @@ namespace RMS.Blazor
         {
 
             services.AddAbpSwaggerGen(
+
                 options =>
                 {
                     options.SwaggerDoc("v1", new OpenApiInfo { Title = "RMS API", Version = "v1" });

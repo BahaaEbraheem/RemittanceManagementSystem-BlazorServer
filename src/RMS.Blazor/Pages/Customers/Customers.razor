@@ -20,12 +20,15 @@
             <Column ColumnSize="ColumnSize.IsAuto">
                 <h2>@L["Customers"]</h2>
             </Column>
+              @if (CanCreateCustomer)
+                {
             <Column ColumnSize="ColumnSize.IsAuto">
                 <Button Color="Color.Primary"
                         Clicked="OpenCreateModalAsync">
                     @L["NewCustomer"]
                 </Button>
             </Column>
+                }
         </Row>
     </CardHeader>
 
@@ -38,20 +41,28 @@
                   ShowPager="true"
                   PageSize="PageSize">
             <DataGridColumns>
-                <DataGridEntityActionsColumn TItem="CustomerDto" @ref="@EntityActionsColumn">
-                    <DisplayTemplate>
+                 @if (CanEditCustomer || CanDeleteCustomer)
+                        {
+                    <DataGridEntityActionsColumn TItem="CustomerDto" @ref="@EntityActionsColumn">
+                        <DisplayTemplate>
                         <EntityActions TItem="CustomerDto" EntityActionsColumn="@EntityActionsColumn">
+                            @if (CanEditCustomer)
+                                {
                             <EntityAction TItem="CustomerDto"
                                           Text="@L["Edit"]"
                                           Clicked="() => OpenEditModalAsync(context)" />
+                                }
+                                  @if (CanDeleteCustomer)
+                                {
                             <EntityAction TItem="CustomerDto"
                                           Text="@L["Delete"]"
                                           Clicked="() => DeleteEntityAsync(context)"
                                           ConfirmationMessage="() => GetDeleteConfirmationMessage(context)" />
-
+                                }
                         </EntityActions>
                     </DisplayTemplate>
                 </DataGridEntityActionsColumn>
+                }
                 <DataGridColumn TItem="CustomerDto"
                                 Field="@nameof(CustomerDto.FirstName)"
                                 Caption="@L["FirstName"]"></DataGridColumn>

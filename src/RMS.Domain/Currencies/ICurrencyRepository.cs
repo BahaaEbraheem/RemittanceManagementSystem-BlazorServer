@@ -10,12 +10,6 @@ namespace RMS.Currencies
    public interface ICurrencyRepository : IRepository<Currency,Guid>
     {
         Task<Currency> FindByNameAndSymbolAsync(string name, string symbol);
-       // Task<List<Currency>> GetListAsync(
-       //    int skipCount,
-       //    int maxResultCount,
-       //    string sorting,
-       //    string filter = null
-       //);
         Task<List<Currency>> GetListAsync(
             int skipCount,
             int maxResultCount,

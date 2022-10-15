@@ -6,7 +6,7 @@ using static RMS.Enums.Enums;
 
 namespace RMS.Customers.Dtos
 {
-   public class CreateUpdateCustomerDto
+   public class CreateUpdateCustomerDto : IValidatableObject
     {
         [Required]
         public string FirstName { get; set; }
@@ -33,6 +33,15 @@ namespace RMS.Customers.Dtos
 
         [EnumDataType(typeof(Gender))]
         public Gender Gender { get; set; }
-
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (BirthDate > DateTime.Now)
+            {
+                yield return new ValidationResult(
+                    "The date of birth cannot be greater than today's date 0!",
+                    new[] { "BirthDate" }
+                );
+            }
+        }
     }
 }

@@ -19,12 +19,15 @@
             <Column ColumnSize="ColumnSize.IsAuto">
                 <h2>@L["Currencies"]</h2>
             </Column>
+                @if (CanCreateCurrency)
+                {
             <Column ColumnSize="ColumnSize.IsAuto">
                 <Button Color="Color.Primary"
                         Clicked="OpenCreateModalAsync">
                     @L["NewCurrency"]
                 </Button>
             </Column>
+                }
         </Row>
     </CardHeader>
 
@@ -37,20 +40,30 @@
                   ShowPager="true"
                   PageSize="PageSize">
             <DataGridColumns>
+                 @if (CanEditCurrency || CanDeleteCurrency)
+                        {
                 <DataGridEntityActionsColumn TItem="CurrencyDto" @ref="@EntityActionsColumn">
                     <DisplayTemplate>
-                        <EntityActions TItem="CurrencyDto" EntityActionsColumn="@EntityActionsColumn">
-                            <EntityAction TItem="CurrencyDto"
+                       
+                            <EntityActions TItem="CurrencyDto" EntityActionsColumn="@EntityActionsColumn">
+                                @if (CanEditCurrency)
+                                {
+                                    <EntityAction TItem="CurrencyDto"
                                           Text="@L["Edit"]"
                                           Clicked="() => OpenEditModalAsync(context)" />
-                            <EntityAction TItem="CurrencyDto"
+                                }
+                                @if (CanDeleteCurrency)
+                                {
+                                    <EntityAction TItem="CurrencyDto"
                                           Text="@L["Delete"]"
                                           Clicked="() => DeleteEntityAsync(context)"
                                           ConfirmationMessage="() => GetDeleteConfirmationMessage(context)" />
-
+                                }
                         </EntityActions>
                     </DisplayTemplate>
                 </DataGridEntityActionsColumn>
+                        }
+
                 <DataGridColumn TItem="CurrencyDto"
                                 Field="@nameof(CurrencyDto.Name)"
                                 Caption="@L["Name"]"></DataGridColumn>

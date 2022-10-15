@@ -33,7 +33,12 @@ namespace RMS.Customers
             {
                 throw new CustomerAlreadyExistsException(firstName);
             }
+            Check.NotNullOrWhiteSpace(birthDate.ToString(), nameof(birthDate));
 
+            if (birthDate.Date > DateTime.Now.Date)
+            {
+                throw new CustomerExceptionInHisBirthDate(birthDate);
+            }
             return new Customer(
                 GuidGenerator.Create(),
                 firstName,lastName,fatherName,

@@ -44,14 +44,14 @@ namespace RMS.Status
             _remittanceRepository = remittanceRepository;
             _remittanceStatusRepository = remittanceStatusRepository;
         }
-        public async Task<PagedResultDto<RemittanceStatusDto>> GetListAsync(RemittanceStatusPagedAndSortedResultRequestDto input)
-        {
-            var filter = ObjectMapper.Map<RemittanceStatusPagedAndSortedResultRequestDto, RemittanceStatus>(input);
-            var sorting = (string.IsNullOrEmpty(input.Sorting) ? "State DESC" : input.Sorting).Replace("ShortName", "State");
-            var remittancesStatus = await _remittanceStatusRepository.GetListAsync(input.SkipCount, input.MaxResultCount, sorting, filter);
-            var totalCount = await _remittanceStatusRepository.GetTotalCountAsync(filter);
-            return  new PagedResultDto<RemittanceStatusDto>(totalCount, ObjectMapper.Map<List<RemittanceStatus>, List<RemittanceStatusDto>>(remittancesStatus));
-        }
+        //public async Task<PagedResultDto<RemittanceStatusDto>> GetListAsync(RemittanceStatusPagedAndSortedResultRequestDto input)
+        //{
+        //    var filter = ObjectMapper.Map<RemittanceStatusPagedAndSortedResultRequestDto, RemittanceStatus>(input);
+        //    var sorting = (string.IsNullOrEmpty(input.Sorting) ? "State DESC" : input.Sorting).Replace("ShortName", "State");
+        //    var remittancesStatus = await _remittanceStatusRepository.GetListAsync(input.SkipCount, input.MaxResultCount, sorting, filter);
+        //    var totalCount = await _remittanceStatusRepository.GetTotalCountAsync(filter);
+        //    return  new PagedResultDto<RemittanceStatusDto>(totalCount, ObjectMapper.Map<List<RemittanceStatus>, List<RemittanceStatusDto>>(remittancesStatus));
+        //}
     }
 }
 

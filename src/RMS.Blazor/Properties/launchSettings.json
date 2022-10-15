@@ -28,14 +28,23 @@
       "applicationUrl": "https://localhost:44329/"
     },
 
-      "Live Reload (watch run)": {
-        "commandName": "Executable",
-        "executablePath": "dotnet.exe",
-        "commandLineArgs": "watch run",
-        "workingDirectory": "$(ProjectDir)",
-        "environmentVariables": {
-          "ASPNETCORE_ENVIRONMENT": "Development"
-        }
+    "Live Reload (watch run)": {
+      "commandName": "Executable",
+      "executablePath": "dotnet.exe",
+      "commandLineArgs": "watch run",
+      "workingDirectory": "$(ProjectDir)",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "swagger.Blazor": {
+      "commandName": "Project",
+      "dotnetRunMessages": "true",
+      "launchBrowser": true,
+      "applicationUrl": "https://localhost:44329/",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
+  }
   }

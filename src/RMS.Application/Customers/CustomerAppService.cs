@@ -45,14 +45,14 @@ namespace RMS.Currencies
 
  
 
-        public async Task<PagedResultDto<CustomerDto>> GetListAsync(CustomerPagedAndSortedResultRequestDto input)
-        {
-            var filter = ObjectMapper.Map<CustomerPagedAndSortedResultRequestDto, Customer>(input);
-            var sorting = (string.IsNullOrEmpty(input.Sorting) ? "FirstName DESC" : input.Sorting).Replace("ShortName", "FirstName");
-            var customers = await _customerRepository.GetListAsync(input.SkipCount, input.MaxResultCount, sorting, filter);
-            var totalCount = await _customerRepository.GetTotalCountAsync(filter);
-            return new PagedResultDto<CustomerDto>(totalCount, ObjectMapper.Map<List<Customer>, List<CustomerDto>>(customers));
-        }
+        //public async Task<PagedResultDto<CustomerDto>> GetListAsync(CustomerPagedAndSortedResultRequestDto input)
+        //{
+        //    var filter = ObjectMapper.Map<CustomerPagedAndSortedResultRequestDto, Customer>(input);
+        //    var sorting = (string.IsNullOrEmpty(input.Sorting) ? "FirstName DESC" : input.Sorting).Replace("ShortName", "FirstName");
+        //    var customers = await _customerRepository.GetListAsync(input.SkipCount, input.MaxResultCount, sorting, filter);
+        //    var totalCount = await _customerRepository.GetTotalCountAsync(filter);
+        //    return new PagedResultDto<CustomerDto>(totalCount, ObjectMapper.Map<List<Customer>, List<CustomerDto>>(customers));
+        //}
 
 
 

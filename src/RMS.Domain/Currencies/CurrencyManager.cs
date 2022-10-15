@@ -1,5 +1,7 @@
 ﻿using JetBrains.Annotations;
+using RMS.Remittances;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,10 +14,13 @@ namespace RMS.Currencies
     public class CurrencyManager : DomainService
     {
         private readonly ICurrencyRepository _currencyRepository;
+        private readonly IRemittanceRepository _remittanceRepository;
 
-        public CurrencyManager(ICurrencyRepository currencyRepository)
+        public CurrencyManager(ICurrencyRepository currencyRepository,
+            IRemittanceRepository remittanceRepository)
         {
             _currencyRepository = currencyRepository;
+            _remittanceRepository = remittanceRepository;
         }
 
         public async Task<Currency> CreateAsync([NotNull] string name, [NotNull] string symbol, string code)
@@ -37,18 +42,32 @@ namespace RMS.Currencies
             );
         }
 
-        public async Task ChangeNameAsync([NotNull] Currency Currency,[NotNull] string newName, [NotNull] string newSymbol)
+        public async Task ChangeNameAsync([NotNull] Currency currency,[NotNull] string newName,
+            [NotNull] string newSymbol)
         {
-            Check.NotNull(Currency, nameof(Currency));
+            Check.NotNull(currency, nameof(currency));
             Check.NotNullOrWhiteSpace(newName, nameof(newName));
 
             var existingCurrency = await _currencyRepository.FindByNameAndSymbolAsync(newName, newSymbol);
-            if (existingCurrency != null && existingCurrency.Id != Currency.Id)
+            if (existingCurrency != null && existingCurrency.Id != currency.Id)
             {
                 throw new CurrencyAlreadyExistsException(newName);
             }
 
-            Currency.ChangeName(newName, newSymbol);
+            currency.ChangeName(newName, newSymbol);
+        }
+
+        public Task IsCurrencyUsedBeforInRemittance(Guid id)
+        {
+            Check.NotNull(id, nameof(id));
+            var remittancequeryable = _remittanceRepository.GetQueryableAsync().Result.ToList();
+            var remittance = remittancequeryable.Where(a => a.CurrencyId == id && a.IsDeleted == false).FirstOrDefault();
+            if (remittance != null)
+            {
+                string remittanceSerial = remittance.SerialNumber;
+                throw new CurrencyAlreadyUsedInRemittanceException(remittanceSerial);
+            }
+            return Task.CompletedTask;
         }
     }
 }

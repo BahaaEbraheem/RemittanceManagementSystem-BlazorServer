@@ -7,6 +7,8 @@
         public const string CustomerAlreadyExists = "RMS:00002";
         public const string BirthDateExeption = "RMS:00003";
         public const string RemittanceAlreadyApproved = "RMS:00004";
+        public const string CurrencyAlreadyUsedInRemittance = "RMS:00005";
+        
 
 
 
