@@ -30,6 +30,7 @@ namespace RMS.Customers
         public async Task<List<Customer>> GetListAsync(int skipCount, int maxResultCount, string sorting, Customer filter)
         {
             var dbSet = await GetDbSetAsync();
+
             var customers= await dbSet
                 .WhereIf(!filter.FirstName.IsNullOrWhiteSpace(), x => x.FirstName.Contains(filter.FirstName))
                 .WhereIf(!filter.LastName.IsNullOrWhiteSpace(), x => x.LastName.Contains(filter.LastName))

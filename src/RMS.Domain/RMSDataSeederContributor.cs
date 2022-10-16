@@ -125,7 +125,7 @@ namespace RMS
             new Currency
             (
                   _guidGenerator.Create(),
-                "Syria Pound",
+                "Syrian Pound",
               "SYP",
                 "£"
 

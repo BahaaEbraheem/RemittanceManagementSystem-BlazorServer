@@ -60,8 +60,6 @@ namespace RMS.Blazor.Pages.Customers
         }
         protected override Task OnDataGridReadAsync(DataGridReadDataEventArgs<CustomerDto> e) 
         {
-
-
             var firstName = e.Columns.FirstOrDefault(c => c.SearchValue != null && c.Field == "FirstName");
             if (firstName != null) this. GetListInput.FirstName = firstName.SearchValue.ToString();
             var lastName = e.Columns.FirstOrDefault(c => c.SearchValue != null && c.Field == "LastName");

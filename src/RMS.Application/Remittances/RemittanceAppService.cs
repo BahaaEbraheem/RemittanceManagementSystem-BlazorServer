@@ -218,6 +218,17 @@ namespace RMS.Remittances
 
         }
 
+
+
+
+
+
+
+
+
+
+
+
         public async Task SetReady(RemittanceDto input)
         {
            var remittanceStatus = await _remittanceStatusManager.UpdateAsync(input.Id);
@@ -258,6 +269,22 @@ namespace RMS.Remittances
             await _remittanceStatusRepository.InsertAsync(remittanceStatus);
 
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         public async Task<ListResultDto<CurrencyLookupDto>> GetCurrencyLookupAsync()
         {

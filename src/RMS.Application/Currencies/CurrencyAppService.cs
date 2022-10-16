@@ -56,8 +56,11 @@ namespace RMS.Currencies
             var totalCount = await _currencyRepository.GetTotalCountAsync(filter);
             return new PagedResultDto<CurrencyDto>(totalCount, ObjectMapper.Map<List<Currency>, List<CurrencyDto>>(currencies));
         }
-        [Authorize(RMSPermissions.Currencies.Create)]
 
+
+
+
+        [Authorize(RMSPermissions.Currencies.Create)]
         public override  Task<CurrencyDto> CreateAsync(CreateUpdateCurrencyDto input)
         {
             if (input == null)
@@ -75,8 +78,9 @@ namespace RMS.Currencies
         }
 
 
-        [Authorize(RMSPermissions.Currencies.Edit)]
 
+
+        [Authorize(RMSPermissions.Currencies.Edit)]
         public override async Task<CurrencyDto> UpdateAsync(Guid id, CreateUpdateCurrencyDto input)
         {
 
@@ -95,8 +99,9 @@ namespace RMS.Currencies
             return await base.UpdateAsync(id, input);
         }
 
-        [Authorize(RMSPermissions.Currencies.Delete)]
 
+
+        [Authorize(RMSPermissions.Currencies.Delete)]
         public override Task DeleteAsync(Guid id)
         {
             //check if this currency using by any remittance

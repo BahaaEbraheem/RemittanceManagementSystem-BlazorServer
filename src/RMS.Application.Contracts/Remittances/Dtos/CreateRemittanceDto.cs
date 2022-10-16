@@ -51,14 +51,13 @@ namespace RMS.Remittances.Dtos
 
         //public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         //{
-
-        //    //if (Amount<=0)
-        //    //{
-        //    //    yield return new ValidationResult(
-        //    //        "Fill Amount greater than 0!",
-        //    //        new[] { "Amount" }
-        //    //    );
-        //    //}
+        //    if (Amount <= 0)
+        //    {
+        //        yield return new ValidationResult(
+        //            "Fill Amount greater than 0!",
+        //            new[] { "Amount" }
+        //        );
+        //    }
         //}
     }
 }

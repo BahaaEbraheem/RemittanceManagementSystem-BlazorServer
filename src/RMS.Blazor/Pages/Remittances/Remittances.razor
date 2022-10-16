@@ -389,6 +389,7 @@
                         <Field>
                             <FieldLabel>@L["Gender"]</FieldLabel>
                             <Select TValue="Gender" @bind-SelectedValue="@NewCustomer.Gender">
+                                <SelectItem TValue="Guid" Value="Guid.Empty">@L["What's your Gender"]</SelectItem>
                                 @foreach (int GenderValue in Enum.GetValues(typeof(Gender)))
                                 {
                                     <SelectItem TValue="Gender" Value="@((Gender) GenderValue)">
@@ -437,19 +438,23 @@
                     </Validation>
                         <Field>
                             <FieldLabel>@L["SenderBy"]</FieldLabel>
+
                             <TextEdit @bind-value="@NewRemittance.SenderName" ReadOnly />
                             <TextEdit hidden @bind-value="@NewRemittance.SenderBy">
                             </TextEdit>
-                        <Button Color="Color.Primary" Clicked="OpenCreateSearchCustomerModal">.....</Button>
+                        <Button Color="Color.Primary" Clicked="()=>OpenCreateSearchCustomerModal(NewRemittance.SerialNumber)">.....</Button>
                        </Field>
                        <Validation MessageLocalizer="@LH.Localize">
                         <Field>
                             <FieldLabel>@L["Type"]</FieldLabel>
-                            <Select TValue="RemittanceType" @bind-SelectedValue="@NewRemittance.Type">
+
+
+                            <Select TValue="RemittanceType" @onchange="ChangeCurrencyByRemittanceType" @bind-SelectedValue="@NewRemittance.Type">
+                                <SelectItem TValue="Guid" Value="Guid.Empty">@L["ChooseInternalOrExternal?"]</SelectItem>
 
                                 @foreach (int RemittanceTypeValue in Enum.GetValues(typeof(RemittanceType)))
                                 {
-                                    <SelectItem TValue="RemittanceType" Value="@((RemittanceType) RemittanceTypeValue)">
+                                    <SelectItem TValue="RemittanceType"  Value="@((RemittanceType) RemittanceTypeValue)">
                                         @L[$"Enum:RemittanceType:{RemittanceTypeValue}"]
                                     </SelectItem>
                                 }
@@ -459,27 +464,18 @@
                        <Validation MessageLocalizer="@LH.Localize">
                         <Field>
                             <FieldLabel>@L["Currency"]</FieldLabel>
+
+
                             <Select TValue="Guid" @bind-SelectedValue="@NewRemittance.CurrencyId">
                                 <SelectItem TValue="Guid" Value="Guid.Empty">@L["PickAnCurrency"]</SelectItem>
                                
-                                    @if (NewRemittance.Type == RemittanceType.Internal)
-                                    {
-                                    <SelectItem TValue="Guid" Value="@currencyList.FirstOrDefault(a=>a.Name=="Syria Pound").Id">
-                                            @currencyList.FirstOrDefault(a=>a.Name=="Syria Pound").Name
-                                        </SelectItem>
-                                    }
-                                    else
-                                    {
-                                           @foreach (var currency in currencyList.Where(a=>a.Name!="Syria Pound"))
+                                         @foreach (var currency in currencyList)
                                            {
                                         <SelectItem TValue="Guid" Value="@currency.Id">
                                             @currency.Name
                                         </SelectItem>
+                                   
                                            }
-
-                                    }
-                               
-                                
                             </Select>
                         </Field>
 
@@ -531,18 +527,23 @@
                             </NumericEdit>
                         </Field>
                           </Validation>
+                            <Validation MessageLocalizer="@LH.Localize">
                                <Field>
                         <FieldLabel>@L["SenderBy"]</FieldLabel>
                         <TextEdit @bind-value="@EditingRemittance.SenderName" ReadOnly />
+                         <Feedback>
+                                    <ValidationError />
+                                </Feedback>
                         <TextEdit hidden @bind-value="@EditingRemittance.SenderBy">
                         </TextEdit>
-                        <Button Color="Color.Primary" Clicked="OpenCreateSearchCustomerModal">.....</Button>
+                        <Button Color="Color.Primary" Clicked="()=>OpenCreateSearchCustomerModal(EditingRemittance.SerialNumber)">.....</Button>
                     </Field>
+                          </Validation>
 
                             <Validation MessageLocalizer="@LH.Localize">
                         <Field>
                             <FieldLabel>@L["Type"]</FieldLabel>
-                            <Select TValue="RemittanceType" @bind-SelectedValue="@EditingRemittance.Type">
+                            <Select TValue="RemittanceType" @onchange="ChangeCurrencyByRemittanceType" @bind-SelectedValue="@EditingRemittance.Type">
                                 @foreach (int RemittanceTypeValue in Enum.GetValues(typeof(RemittanceType)))
                                 {
                                     <SelectItem TValue="RemittanceType" Value="@((RemittanceType) RemittanceTypeValue)">

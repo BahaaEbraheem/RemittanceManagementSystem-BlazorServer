@@ -29,6 +29,9 @@ using Volo.Abp.BlazoriseUI.Components;
 using static RMS.Enums.Enums;
 using RMS.Customers;
 using RMS.Permissions;
+using static RMS.Permissions.RMSPermissions;
+using Volo.Abp;
+using Volo.Abp.AspNetCore.Components.Web.BasicTheme.Themes.Basic;
 
 namespace RMS.Blazor.Pages.Remittances
 {
@@ -49,6 +52,10 @@ namespace RMS.Blazor.Pages.Remittances
         private string CurrentSortingCustomer { get; set; }
         private int CurrentPageCustomer { get; set; }
         private int TotalCount { get; set; }
+
+
+        private string SelectedCurrency { get; set; }
+
         private CreateRemittanceDto NewRemittance { get; set; }
         private Guid EditingRemittanceId { get; set; }
         private UpdateRemittanceDto EditingRemittance { get; set; }
@@ -128,6 +135,7 @@ namespace RMS.Blazor.Pages.Remittances
         }
         private async Task OnDataGridCustomersReadAsync(DataGridReadDataEventArgs<CustomerDto> e_Customer)
         {
+
             customerPagedAndSortedResultRequestDto = new CustomerPagedAndSortedResultRequestDto();
             CurrentSortingCustomer = e_Customer.Columns
             .Select(c => c.Field + (c.SortDirection == SortDirection.Descending ? " DESC" : ""))
@@ -140,12 +148,16 @@ namespace RMS.Blazor.Pages.Remittances
             var lastName = e_Customer.Columns.FirstOrDefault(c => c.SearchValue != null && c.Field == "LastName");
             if (lastName != null)
                 customerPagedAndSortedResultRequestDto.LastName = lastName.SearchValue.ToString();
+
             var fatherName = e_Customer.Columns.FirstOrDefault(c => c.SearchValue != null && c.Field == "FatherName");
             if (fatherName != null)
                 customerPagedAndSortedResultRequestDto.FatherName = fatherName.SearchValue.ToString();
             var motherName = e_Customer.Columns.FirstOrDefault(c => c.SearchValue != null && c.Field == "MotherName");
             if (motherName != null)
                 customerPagedAndSortedResultRequestDto.MotherName = motherName.SearchValue.ToString();
+
+
+
             await GetCustomersAsync(customerPagedAndSortedResultRequestDto);
             await InvokeAsync(StateHasChanged);
         }
@@ -166,12 +178,15 @@ namespace RMS.Blazor.Pages.Remittances
 
         private async Task GetCustomersAsync(CustomerPagedAndSortedResultRequestDto customerPagedAndSortedResultRequestDto)
         {
+
             PagedResultDto<CustomerDto> result = new PagedResultDto<CustomerDto>();
             if (customerPagedAndSortedResultRequestDto == null)
             {
+                
                 result = await CustomerAppService.GetListAsync(
                new CustomerPagedAndSortedResultRequestDto
                {
+                   
                    MaxResultCount = PageSize,
                    SkipCount = CurrentPageCustomer * PageSize,
                    Sorting = CurrentSortingCustomer
@@ -190,11 +205,12 @@ namespace RMS.Blazor.Pages.Remittances
                  MaxResultCount = PageSize,
                  SkipCount = CurrentPageCustomer * PageSize,
                  Sorting = CurrentSortingCustomer
-
              }
              );
 
             }
+
+
             CustomerList = result.Items;
             TotalCount = (int)result.TotalCount;
         }
@@ -203,9 +219,16 @@ namespace RMS.Blazor.Pages.Remittances
         {
             await CreateValidationsRef.ClearAll();
             await EditValidationsRef.ClearAll();
+            var checkAge = DateTime.Now.Year - customerDto.BirthDate.Year;
+
             //Check If Pass CreateRemittanceModal Or UpdateRemittanceModal Or ReleaseRemittanceModal
             if (string.IsNullOrWhiteSpace(editingRemittance.SenderName) && CanCreateRemittance)
             {
+                if ((customerDto.BirthDate > DateTime.Now) || (checkAge < 18))
+                {
+                   await  Message.Error(L["Customer Dont Pass Because His Age Smaller Than 18 "]);
+                    return;
+                }
                 newRemittance.SenderBy = customerDto.Id;
                 newRemittance.SenderName = customerDto.FirstName + " " + customerDto.FatherName
                 + " " + customerDto.LastName;
@@ -215,6 +238,11 @@ namespace RMS.Blazor.Pages.Remittances
             }
             else if (!string.IsNullOrWhiteSpace(editingRemittance.SenderName) && CanEditRemittance)
             {
+                if ((customerDto.BirthDate > DateTime.Now) || (checkAge < 18))
+                {
+                    await Message.Error(L["Customer Dont Pass Because His Age Smaller Than 18 "]);
+                    return;
+                }
                 editingRemittance.SenderBy = customerDto.Id;
                 editingRemittance.SenderName = customerDto.FirstName + " " + customerDto.FatherName
                 + " " + customerDto.LastName;
@@ -253,23 +281,21 @@ namespace RMS.Blazor.Pages.Remittances
             NewCustomer = new CreateUpdateCustomerDto();
             if (CanReleaseRemittance)
             {
-
                 CreateSearchCustomerModal.Show();
                 ReleaseRemittanceModal.Hide();
             }
         }
-        private void OpenCreateSearchCustomerModal()
+        private void OpenCreateSearchCustomerModal(string serialNum)
         {
+
             CreateCustomerValidationsRef.ClearAll();
             NewCustomer = new CreateUpdateCustomerDto();
-            if (CanCreateRemittance)
+            if (CanCreateRemittance || CanEditRemittance)
             {
                 CreateSearchCustomerModal.Show();
                 CreateRemittanceModal.Hide();
                 EditRemittanceModal.Hide();
             }
-
-
         }
 
         private void CloseCreateSearchCustomerModal()
@@ -309,23 +335,23 @@ namespace RMS.Blazor.Pages.Remittances
             CreateRemittanceModal.Hide();
         }
 
-        private void OpenEditRemittanceModal(RemittanceDto Remittance)
+        private void OpenEditRemittanceModal(RemittanceDto remittance)
         {
             EditValidationsRef.ClearAll();
-            EditingRemittanceId = Remittance.Id;
-            EditingRemittance = ObjectMapper.Map<RemittanceDto, UpdateRemittanceDto>(Remittance);
+            EditingRemittanceId = remittance.Id;
+            EditingRemittance = ObjectMapper.Map<RemittanceDto, UpdateRemittanceDto>(remittance);
             EditRemittanceModal.Show();
         }
 
-        private async Task DeleteRemittanceAsync(RemittanceDto Remittance)
+        private async Task DeleteRemittanceAsync(RemittanceDto remittance)
         {
-            var confirmMessage = L["RemittanceDeletionConfirmationMessage", Remittance.Amount];
+            var confirmMessage = L["RemittanceDeletionConfirmationMessage", remittance.Amount];
             if (!await Message.Confirm(confirmMessage))
             {
                 return;
             }
 
-            await RemittanceAppService.DeleteAsync(Remittance.Id);
+            await RemittanceAppService.DeleteAsync(remittance.Id);
             await GetRemittancesAsync();
         }
 
@@ -369,6 +395,24 @@ namespace RMS.Blazor.Pages.Remittances
                 await RemittanceAppService.UpdateAsync(EditingRemittanceId, editingRemittance);
                 await GetRemittancesAsync();
                 await EditRemittanceModal.Hide();
+            }
+        }
+
+       private async void ChangeCurrencyByRemittanceType(ChangeEventArgs e)
+        {
+            currencyList = (await RemittanceAppService.GetCurrencyLookupAsync()).Items;
+            SelectedCurrency = e.Value.ToString();
+            if (SelectedCurrency == RemittanceType.Internal.ToString())
+            {
+                currencyList = currencyList.Where(a => a.Name == "Syrian Pound").ToList();
+                NewRemittance.CurrencyId=currencyList[0].Id;
+                EditingRemittance.CurrencyId=currencyList[0].Id;
+                await InvokeAsync(StateHasChanged);
+            }
+            else
+            {
+                currencyList = currencyList.Where(a => a.Name != "Syrian Pound").ToList();
+               await InvokeAsync(StateHasChanged);
             }
         }
 

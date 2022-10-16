@@ -23,6 +23,8 @@ using Volo.Abp.Users;
 
 namespace RMS.Currencies
 {
+    [Authorize(RMSPermissions.Customers.Default)]
+
     public class CustomerAppService :
         CrudAppService<
                Customer, //The customer entity
@@ -34,63 +36,57 @@ namespace RMS.Currencies
     {
         private readonly ICustomerRepository _customerRepository;
         private readonly IRemittanceRepository _remittanceRepository;
-        public CustomerAppService(IRepository<Customer, Guid> repository, ICustomerRepository customerRepository,
+        private readonly CustomerManager _customerManager;
+        public CustomerAppService(IRepository<Customer, Guid> repository,
+            CustomerManager customerManager,
+            ICustomerRepository customerRepository,
             IRemittanceRepository remittanceRepository)
             : base(repository)
         {
+            _customerManager = customerManager;
             _customerRepository = customerRepository;
             _remittanceRepository = remittanceRepository;
         }
 
 
- 
-
-        //public async Task<PagedResultDto<CustomerDto>> GetListAsync(CustomerPagedAndSortedResultRequestDto input)
-        //{
-        //    var filter = ObjectMapper.Map<CustomerPagedAndSortedResultRequestDto, Customer>(input);
-        //    var sorting = (string.IsNullOrEmpty(input.Sorting) ? "FirstName DESC" : input.Sorting).Replace("ShortName", "FirstName");
-        //    var customers = await _customerRepository.GetListAsync(input.SkipCount, input.MaxResultCount, sorting, filter);
-        //    var totalCount = await _customerRepository.GetTotalCountAsync(filter);
-        //    return new PagedResultDto<CustomerDto>(totalCount, ObjectMapper.Map<List<Customer>, List<CustomerDto>>(customers));
-        //}
 
 
+        public override async Task<PagedResultDto<CustomerDto>> GetListAsync(CustomerPagedAndSortedResultRequestDto input)
+        {
+            var filter = ObjectMapper.Map<CustomerPagedAndSortedResultRequestDto, Customer>(input);
+            var sorting = (string.IsNullOrEmpty(input.Sorting) ? "FirstName DESC" : input.Sorting).Replace("ShortName", "FirstName");
+            var customers = await _customerRepository.GetListAsync(input.SkipCount, input.MaxResultCount, sorting, filter);
+            var totalCount = await _customerRepository.GetTotalCountAsync(filter);
+            return new PagedResultDto<CustomerDto>(totalCount, ObjectMapper.Map<List<Customer>, List<CustomerDto>>(customers));
+        }
+
+        [Authorize(RMSPermissions.Customers.Create)]
+        public override Task<CustomerDto> CreateAsync(CreateUpdateCustomerDto input)
+        {
+            return base.CreateAsync(input);
+        }
 
 
-        //public async Task<PagedResultDto<CustomerDto>> GetListAsync(GetCustomerListDto input)
-        //{
-        //    //Get the IQueryable<remittance> from the repository
 
-        //    var customerqueryable = await _customerRepository.GetQueryableAsync();
+        [Authorize(RMSPermissions.Customers.Edit)]
+        public override Task<CustomerDto> UpdateAsync(Guid id, CreateUpdateCustomerDto input)
+        {
+            return base.UpdateAsync(id, input);
+        }
 
-        //    //Prepare a query to join remittances and currencies
-        //    var query = from customer in customerqueryable 
-        //                select new {  customer };
 
-        //    //Paging
-        //    query = query
-        //        .OrderBy(x => x.customer.FirstName).ThenBy(x => x.customer.FatherName)
-        //        .Skip(input.SkipCount)
-        //        .Take(input.MaxResultCount);
+        [Authorize(RMSPermissions.Customers.Delete)]
+        public override Task DeleteAsync(Guid id)
+        {
+            _customerManager.IsCustomerUsedBeforInRemittance(id);
 
-        //    //Execute the query and get a list
-        //    var queryResult = await AsyncExecuter.ToListAsync(query);
+            return base.DeleteAsync(id);
+        }
 
-        //    //Convert the query result to a list of RemittanceDto objects
-        //    var customerDtos = queryResult.Select(x =>
-        //    {
-        //        var customerDto = ObjectMapper.Map<Customer, CustomerDto>(x.customer);
-        //        return customerDto;
-        //    }).ToList();
 
-        //    //Get the total count with another query
-        //    var totalCount = await _customerRepository.GetCountAsync();
 
-        //    return new PagedResultDto<CustomerDto>(
-        //        totalCount,
-        //        customerDtos
-        //    );
-        //}
+
+
     }
 }
 

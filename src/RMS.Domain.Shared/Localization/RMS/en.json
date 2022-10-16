@@ -15,6 +15,11 @@
     "RMS:00003": "The customer's date of birth should not be greater than today's date: {birthDate}",
     "RMS:00004": "The Remittance has been approved, so it cannot be modified",
     "RMS:00005": "This Currency Already Used In Remittance : {remittanceSerial} ",
+    "RMS:00006": "This Customer ( {customerName} ) Already Used In Remittance ",
+    "RMS:00007": "Customer Dont Pass Because His Age Smaller Than 18 ",
+
+
+
 
     "CurrencyDeletionConfirmationMessage": "Are you sure to delete the Currency '{0}'?",
     "CustomerDeletionConfirmationMessage": "Are you sure to delete the Customer '{0}'?",
@@ -89,7 +94,7 @@
     "PickAnTypeOfRemittance": "Pick An Type Of Remittance",
     "PickAnCurrency": "Pick An Currency",
     //Currency
-
+    "ChooseInternalOrExternal?": "Choose Internal Or External ?",
 
 
     "Menu:RemittancesStatus": "Remittances Status"
