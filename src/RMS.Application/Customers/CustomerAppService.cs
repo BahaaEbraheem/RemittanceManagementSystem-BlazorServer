@@ -53,6 +53,7 @@ namespace RMS.Currencies
 
         public override async Task<PagedResultDto<CustomerDto>> GetListAsync(CustomerPagedAndSortedResultRequestDto input)
         {
+
             var filter = ObjectMapper.Map<CustomerPagedAndSortedResultRequestDto, Customer>(input);
             var sorting = (string.IsNullOrEmpty(input.Sorting) ? "FirstName DESC" : input.Sorting).Replace("ShortName", "FirstName");
             var customers = await _customerRepository.GetListAsync(input.SkipCount, input.MaxResultCount, sorting, filter);
@@ -63,7 +64,21 @@ namespace RMS.Currencies
         [Authorize(RMSPermissions.Customers.Create)]
         public override Task<CustomerDto> CreateAsync(CreateUpdateCustomerDto input)
         {
-            return base.CreateAsync(input);
+            try
+            {
+                if (input!=null)
+                {
+                    return base.CreateAsync(input);
+
+                }
+                throw new ArgumentNullException(nameof(input));
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
 
@@ -71,20 +86,43 @@ namespace RMS.Currencies
         [Authorize(RMSPermissions.Customers.Edit)]
         public override Task<CustomerDto> UpdateAsync(Guid id, CreateUpdateCustomerDto input)
         {
-            return base.UpdateAsync(id, input);
+            try
+            {
+                if (input != null)
+                {
+                    return base.UpdateAsync(id, input);
+
+                }
+                    throw new ArgumentNullException(nameof(input));
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
 
         [Authorize(RMSPermissions.Customers.Delete)]
         public override Task DeleteAsync(Guid id)
         {
-            _customerManager.IsCustomerUsedBeforInRemittance(id);
+            try
+            {
+                if (!id.Equals(null))
+                {
+                    _customerManager.IsCustomerUsedBeforInRemittance(id);
 
-            return base.DeleteAsync(id);
+                    return base.DeleteAsync(id);
+                }
+                throw new ArgumentNullException(nameof(id));
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+          
         }
-
-
-
 
 
     }

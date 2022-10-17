@@ -30,10 +30,6 @@ namespace RMS.Status
             _currentUser = currentUser;
         }
 
-
-
-
-
         public async Task<RemittanceStatus> CreateAsync(Guid remittanceId, Remittance_Status State)
         {
 
@@ -42,9 +38,7 @@ namespace RMS.Status
                  remittanceId, State
 
             );
-           
         }
-
 
         public  async Task<RemittanceStatus> UpdateAsync(Guid remittanceId)
         {

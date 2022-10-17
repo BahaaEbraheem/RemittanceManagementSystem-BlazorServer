@@ -46,7 +46,13 @@
     "Menu:RMS": "RMS",
     "Menu:Currencies": "Currencies",
     "Menu:Customers": "Customers",
-    "Menu:Remittances": "Remittances",
+    "Menu:Remittances": "Created Remittances",
+    "Menu:ReadyRemittances": "Ready Remittances",
+    "Menu:ApprovedRemittances": "Approved Remittances",
+    "CreatedRemittances": "Created Remittances",
+    "ApprovedRemittances": "Approved Remittances",
+    "ReadyRemittances": "Ready Remittances",
+
 
     "Actions": "Actions",
     "Close": "Close",

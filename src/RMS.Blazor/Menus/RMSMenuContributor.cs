@@ -20,49 +20,22 @@ namespace RMS.Blazor.Menus
             }
         }
 
-        private  Task ConfigureMainMenuAsync(MenuConfigurationContext context)
+        private Task ConfigureMainMenuAsync(MenuConfigurationContext context)
         {
             var administration = context.Menu.GetAdministration();
             var l = context.GetLocalizer<RMSResource>();
-
-            context.Menu.Items.Insert(
-                0,
-                new ApplicationMenuItem(
-                    RMSMenus.Home,
-                    l["Menu:Home"],
-                    "/",
-                    icon: "fas fa-home",
-                    order: 0
-                )
-            );
-            context.Menu.Items.Insert(
-               0,
-               new ApplicationMenuItem(
-                   RMSMenus.RemittancesStatus,
-                   l["Menu:RemittancesStatus"],
-                   url: "/remittancesstatus",
-                   icon: "fas fa-home",
-                   order: 0
-               )
-           );
             var RMSMenu = new ApplicationMenuItem(
-            RMSMenus.Home,
-             l["Menu:RMS"],
-             icon: "fa fa-book"
-              );
+           RMSMenus.Home,
+            l["Menu:RMS"],
+            icon: "fa fa-book"
+             );
 
             context.Menu.AddItem(RMSMenu);
 
             //CHECK the PERMISSION
-            if ( context.IsGrantedAsync(RMSPermissions.Remittances.Default).Result)
+            if (context.IsGrantedAsync(RMSPermissions.Remittances.Default).Result)
             {
                 RMSMenu.AddItem(
-                new ApplicationMenuItem(
-                    RMSMenus.Remittances,
-                    l["Menu:Remittances"],
-                    url: "/remittances"
-                    )
-                ).AddItem(
                 new ApplicationMenuItem(
                     RMSMenus.Customers,
                     l["Menu:Customers"],
@@ -75,9 +48,71 @@ namespace RMS.Blazor.Menus
                     url: "/currencies"
                 )
             );
+          
+          
+            context.Menu.Items.Insert(
+               0,
+               new ApplicationMenuItem(
+                   RMSMenus.RemittancesStatus,
+                   l["Menu:RemittancesStatus"],
+                   url: "/remittancesstatus",
+                   icon: "fas fa-home",
+                   order: 0
+               )
+           );
             }
+            context.Menu.Items.Insert(
+              0,
+              new ApplicationMenuItem(
+                  RMSMenus.Home,
+                  l["Menu:Home"],
+                  "/",
+                  icon: "fas fa-home",
+                  order: 0
+              )
+          );
+            if (context.IsGrantedAsync(RMSPermissions.Status.Create).Result)
+            {
+                context.Menu.Items.Insert(
+       0,
+       new ApplicationMenuItem(
+                    RMSMenus.Remittances,
+                    l["Menu:Remittances"],
+                    url: "/remittances",
+           icon: "fas fa-home",
+           order: 0
+                      )
+                     );
+            }
+            if (context.IsGrantedAsync(RMSPermissions.Status.Approved).Result)
+            {
+                context.Menu.Items.Insert(
+       0,
+       new ApplicationMenuItem(
+           RMSMenus.ReadyRemittances,
+           l["Menu:ReadyRemittances"],
+           url: "/readyremittances",
+           icon: "fas fa-home",
+           order: 0
+                      )
+                     );
+            }
+            if (context.IsGrantedAsync(RMSPermissions.Status.Released).Result)
+            {
+                context.Menu.Items.Insert(
+       0,
+       new ApplicationMenuItem(
+           RMSMenus.ApprovedRemittances,
+           l["Menu:ApprovedRemittances"],
+           url: "/approvedremittances",
+           icon: "fas fa-home",
+           order: 0
+                      )
+                     );
+            }
+           
 
-            
+
             if (MultiTenancyConsts.IsEnabled)
             {
                 administration.SetSubItemOrder(TenantManagementMenuNames.GroupName, 1);

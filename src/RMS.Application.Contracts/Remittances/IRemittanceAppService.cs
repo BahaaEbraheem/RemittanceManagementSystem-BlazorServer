@@ -14,6 +14,12 @@ namespace RMS.Remittances
 
         Task<PagedResultDto<RemittanceDto>> GetListAsync(GetRemittanceListDto input);
         Task<PagedResultDto<RemittanceDto>> GetListRemittancesStatusAsync(GetRemittanceListDto input);
+        Task<PagedResultDto<RemittanceDto>> GetListRemittancesForCreator(GetRemittanceListDto input);
+        Task<PagedResultDto<RemittanceDto>> GetListRemittancesForSupervisor(GetRemittanceListDto input);
+        Task<PagedResultDto<RemittanceDto>> GetListRemittancesForReleaser(GetRemittanceListDto input);
+        
+
+
         Task<RemittanceDto> CreateAsync(CreateRemittanceDto input);
 
         Task UpdateAsync(Guid id, UpdateRemittanceDto input);
@@ -24,6 +30,8 @@ namespace RMS.Remittances
         Task<ListResultDto<CustomerLookupDto>> GetCustomerLookupAsync();
         Task<ListResultDto<UserLookupDto>> GetUserLookupAsync();
         Task SetReady(RemittanceDto input);
+        Task SetApprove(RemittanceDto input);
+        Task SetRelease(RemittanceDto input);
 
     }
 }

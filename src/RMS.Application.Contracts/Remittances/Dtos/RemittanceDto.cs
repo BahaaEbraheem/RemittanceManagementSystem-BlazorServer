@@ -11,6 +11,7 @@ namespace RMS.Remittances.Dtos
     {
 
         public double Amount { get; set; }
+        public double TotalAmount { get; set; }
 
         public RemittanceType Type { get; set; }
         public string SerialNumber { get;  set; }
@@ -33,7 +34,8 @@ namespace RMS.Remittances.Dtos
         public string CurrencyName { get; set; }
 
 
-        public Remittance_Status State { get; set; } 
+        public Remittance_Status State { get; set; }
+        public DateTime? StatusDate { get; set; }
 
 
     }

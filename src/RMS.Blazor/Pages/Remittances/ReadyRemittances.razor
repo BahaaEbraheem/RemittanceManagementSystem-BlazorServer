@@ -1,47 +1,72 @@
-﻿@page "/remittancesstatus"
-
-@using Volo.Abp.MultiTenancy
-@using RMS.Remittances
-@using RMS.Remittances.Dtos
+﻿@page "/readyremittances"
+@using RMS.Blazor
 @using Volo.Abp.AspNetCore.Components
 @using Volo.Abp.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Web
 @using Volo.Abp.Application.Dtos
-@using Microsoft.Extensions.Localization
-@using Blazorise
+@using RMS.Remittances
+@using Microsoft.AspNetCore.Components.Forms
+@using RMS.Remittances.Dtos
+@using RMS.Customers
+@using RMS.Customers.Dtos
 @using RMS.Localization
+@using Volo.Abp.AspNetCore.Components.Web.BasicTheme.Themes.Basic
+@using Volo.Abp.Domain.Entities
+@using Blazorise
+@using Microsoft.JSInterop
+@using static RMS.Enums.Enums;
+@using Microsoft.Extensions.Localization
+@using Volo.Abp.DependencyInjection
+@using Volo.Abp.AspNetCore.Components.Server.BasicTheme.Themes.Basic
+@using Volo.Abp.AspNetCore.Components.Server.BasicTheme.Bundling
 @inherits RMSComponentBase
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@using Microsoft.AspNetCore.Authorization
+@attribute [Dependency(ReplaceServices = true)]
+
 @inject AbpBlazorMessageLocalizerHelper<RMSResource> LH
 @inject IStringLocalizer<RMSResource> L
+
 @inject IRemittanceAppService RemittanceAppService
+@inject ICustomerAppService CustomerAppService
+@inject NavigationManager NavigationManager
+
 
 <Card>
         <CardHeader>
         <Row Class="justify-content-between">
             <Column ColumnSize="ColumnSize.IsAuto">
-                <h2>@L["Remittances"]</h2>
+                <h2>@L["ReadyRemittances"]</h2>
             </Column>
-            <Column ColumnSize="ColumnSize.IsAuto">
-               
-            </Column>
+  
         </Row>
     </CardHeader>
 
     <CardBody>
         <DataGrid TItem="RemittanceDto"
                   Data="RemittanceList"
-                  Filterable="true"
                   ReadData="OnDataGridReadAsync"
                   TotalItems="TotalCount"
                   ShowPager="true"
                   PageSize="PageSize">
                   
             <DataGridColumns>
-                <DataGridColumn TItem="RemittanceDto"
-                                Field="@nameof(RemittanceDto.SerialNumber)"
-                                Caption="@L["SerialNumber"]"></DataGridColumn>
+                <DataGridColumn Width="150px"
+                                TItem="RemittanceDto"
+                                Field="@nameof(RemittanceDto.Id)"
+                                Sortable="false"
+                                Caption="@L["Actions"]">
+                    <DisplayTemplate>
+                        <Dropdown>
+                            <DropdownToggle Color="Color.Primary">
+                                @L["Actions"]
+                            </DropdownToggle>
+                            <DropdownMenu>
+                                       <DropdownItem Clicked="() =>UpdateRemittanceToReadyAsync(context)">
+                                            @L["Approve"]
+                                           </DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                    </DisplayTemplate>
+                </DataGridColumn>
                 <DataGridColumn TItem="RemittanceDto"
                                 Field="@nameof(RemittanceDto.Amount)"
                                 Caption="@L["Amount"]"></DataGridColumn>
