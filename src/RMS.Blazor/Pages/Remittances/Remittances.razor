@@ -52,6 +52,9 @@
         <DataGrid TItem="RemittanceDto"
                   Data="RemittanceList"
                   ReadData="OnDataGridReadAsync"
+                   Filterable
+                     FilterMethod="DataGridFilterMethod.StartsWith"
+                     Responsive
                   TotalItems="TotalCount"
                   ShowPager="true"
                   PageSize="PageSize">
@@ -109,7 +112,7 @@
                 <DataGridColumn TItem="RemittanceDto"
                                 Field="@nameof(RemittanceDto.CreationTime)"
                                 Caption="@L["CreationTime"]">
-    <DisplayTemplate>
+                    <DisplayTemplate>
                         @context.CreationTime.ToString()
                     </DisplayTemplate>
                 </DataGridColumn>
@@ -349,7 +352,7 @@
                         <Field>
                             <FieldLabel>@L["SenderBy"]</FieldLabel>
 
-                            <TextEdit @bind-value="@NewRemittance.SenderName" ReadOnly />
+                        <TextEdit @bind-value="@NewRemittance.SenderName" Placeholder="Please choose Sender Customer" ReadOnly></TextEdit>
                             <TextEdit hidden @bind-value="@NewRemittance.SenderBy">
                             </TextEdit>
                         <Button Color="Color.Primary" Clicked="()=>OpenCreateSearchCustomerModal(NewRemittance.SerialNumber)">.....</Button>

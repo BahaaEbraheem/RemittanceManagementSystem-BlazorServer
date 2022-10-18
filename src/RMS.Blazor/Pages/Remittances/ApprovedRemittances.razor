@@ -137,7 +137,7 @@
                     </Field>
                      <Field>
                         <FieldLabel>@L["ReceiverBy"]</FieldLabel>
-                        <TextEdit @bind-value="@EditingRemittance.ReceiverName" Disabled />
+                        <TextEdit @bind-value="@EditingRemittance.ReceiverName" Placeholder="Please choose Receiver Customer" Disabled ></TextEdit>
                         <TextEdit hidden @bind-value="@EditingRemittance.ReceiverBy">
                         </TextEdit>
                         <Button Color="Color.Primary" Clicked="OpenCreateSearchCustomerModalForReleaser">.....</Button>

@@ -164,14 +164,7 @@ namespace RMS.Blazor.Pages.Remittances
             await InvokeAsync(StateHasChanged);
         }
 
-        private void OpenReleaseRemittanceModal(RemittanceDto Remittance)
-        {
-            EditValidationsRef.ClearAll();
-            EditingRemittanceId = Remittance.Id;
-            EditingRemittance = ObjectMapper.Map<RemittanceDto, UpdateRemittanceDto>(Remittance);
-            EditingRemittance.ReceiverName = null;
-            ReleaseRemittanceModal.Show();
-        }
+
 
 
         private async Task GetCustomersAsync(CustomerPagedAndSortedResultRequestDto customerPagedAndSortedResultRequestDto)
@@ -283,7 +276,6 @@ namespace RMS.Blazor.Pages.Remittances
         {
             if (await CreateCustomerValidationsRef.ValidateAll())
             {
-
                 await CustomerAppService.CreateAsync(NewCustomer);
 
                 await CreateCustomerModal.Hide();
@@ -335,6 +327,26 @@ namespace RMS.Blazor.Pages.Remittances
         {
             if (await CreateValidationsRef.ValidateAll())
             {
+                if (NewRemittance.SenderBy.Equals(null))
+                {
+                    await Message.Error(L["please Fill Sender Customer"]);
+                    return;
+                }
+                else if (NewRemittance.Amount <=0)
+                {
+                    await Message.Error(L["please Fill Amount Value Greater Than 0"]);
+                    return;
+                }
+                else if (NewRemittance.Type.Equals(null))
+                {
+                    await Message.Error(L["please Choose External Or Internal Remittance"]);
+                    return;
+                }
+                else if (NewRemittance.CurrencyId.Equals(null))
+                {
+                    await Message.Error(L["please Choose Currency Remittance"]);
+                    return;
+                }
                 await RemittanceAppService.CreateAsync(NewRemittance);
                 await GetRemittancesAsync();
                 await CreateRemittanceModal.Hide();

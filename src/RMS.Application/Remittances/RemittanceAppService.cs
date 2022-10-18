@@ -449,6 +449,10 @@ namespace RMS.Remittances
                         await _remittanceStatusRepository.InsertAsync(remittanceStatus);
                     }
                 }
+                else
+                {
+                    throw new InvalidOperationException("Please fill Receiver Customer");
+                }
             }
             catch (Exception)
             {

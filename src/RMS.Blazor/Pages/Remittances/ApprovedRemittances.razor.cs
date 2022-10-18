@@ -278,6 +278,11 @@ namespace RMS.Blazor.Pages.Remittances
             RemittanceDto remittance = ObjectMapper.Map<UpdateRemittanceDto, RemittanceDto>(updateRemittance);
             if (editingRemittanceId.Equals(null))
                 throw new ArgumentNullException(nameof(editingRemittanceId));
+            if (remittance.ReceiverBy.Equals(null))
+            {
+                await Message.Error(L["Please Fill Receiver Customer"]);
+                return;
+            }
             remittance.Id = editingRemittanceId;
             await RemittanceAppService.SetRelease(remittance);
             await GetRemittancesAsync();
