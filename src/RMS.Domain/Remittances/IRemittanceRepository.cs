@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RMS.Customers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +13,9 @@ namespace RMS.Remittances
     {
         Task<Remittance> FindBySerialNumAsync(string serialNum);
         Task<Remittance> FindRemittance_StillDraftAsync(double amount,string receiverName );
-        Task<List<Remittance>> GetListAsync(int skipCount, int maxResultCount, string sorting, string filter = null);
+
+        Task<List<Remittance>> GetListRemittancesStatusAsync(int skipCount, int maxResultCount, string sorting, Remittance filter);
+        Task<int> GetTotalCountAsync(Remittance filter);
         Task<bool> IsApprovedRemittanceAsync(Remittance remittance);
 
     }

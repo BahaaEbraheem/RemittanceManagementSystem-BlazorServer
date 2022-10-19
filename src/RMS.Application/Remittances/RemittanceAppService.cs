@@ -69,7 +69,7 @@ namespace RMS.Remittances
             _remittanceStatusAppService = remittanceStatusAppService;
             _remittanceStatusManager = remittanceStatusManager;
             _identityUserManager = identityUserManager;
-       
+
 
         }
         [Authorize(RMSPermissions.Remittances.Create)]
@@ -112,7 +112,7 @@ namespace RMS.Remittances
                         }
                     }
                     //check if Remittance contain Receiver Customer
-                    if (input.ReceiverBy!=null)
+                    if (input.ReceiverBy != null)
                     {
                         throw new Exception("The Receiver Customer Should be passed on Release Remittance no in Created Remittance");
                     }
@@ -232,9 +232,9 @@ namespace RMS.Remittances
                            on remittance.SenderBy equals receiverCustomer.Id
                             join remittanceStatus in remittanceStatusQyery
                             on remittance.Id equals remittanceStatus.RemittanceId
-                            where (remittanceStatus.State == Remittance_Status.Draft && roles.Contains("Creator")) ||
-                            (remittanceStatus.State == Remittance_Status.Ready && roles.Contains("Supervisor")) ||
-                            (remittanceStatus.State == Remittance_Status.Approved && roles.Contains("Releaser"))
+                            //where (remittanceStatus.State == Remittance_Status.Draft && roles.Contains("Creator")) ||
+                            //(remittanceStatus.State == Remittance_Status.Ready && roles.Contains("Supervisor")) ||
+                            //(remittanceStatus.State == Remittance_Status.Approved && roles.Contains("Releaser"))
                             select new { remittance, currency, remittanceStatus, senderCustomer, receiverCustomer };
 
                 //Paging
@@ -286,7 +286,7 @@ namespace RMS.Remittances
         {
             try
             {
-                if (id.Equals(null) && input!=null)
+                if (id.Equals(null) && input != null)
                 {
                     var remittanceStatus = await _remittanceStatusManager.UpdateAsync(id);
                     if (remittanceStatus != null && remittanceStatus.State == Remittance_Status.Draft)
@@ -433,10 +433,10 @@ namespace RMS.Remittances
         {
             try
             {
-                if (input != null && !input.ReceiverBy.Equals(null) )
+                if (input != null && !input.ReceiverBy.Equals(null))
                 {
                     var remittanceStatus = await _remittanceStatusManager.UpdateAsync(input.Id);
-                    if (remittanceStatus != null && remittanceStatus.State == Remittance_Status.Approved )
+                    if (remittanceStatus != null && remittanceStatus.State == Remittance_Status.Approved)
                     {
 
                         var remittance = await _remittanceRepository.GetAsync(input.Id);
@@ -479,17 +479,97 @@ namespace RMS.Remittances
             {
                 return $"remittance.{nameof(Remittance.ReceiverFullName)}";
             }
-
-            if (sorting.Contains("receiverFullName", StringComparison.OrdinalIgnoreCase))
+            else if (sorting.Contains("id", StringComparison.OrdinalIgnoreCase))
             {
                 return sorting.Replace(
-                    "receiverFullName",
-                    "remittance.receiverFullName",
+                    "Id",
+                    "remittance.Id",
+                    StringComparison.OrdinalIgnoreCase
+                );
+            }
+            else if (sorting.Contains("serialNumber", StringComparison.OrdinalIgnoreCase))
+            {
+                return sorting.Replace(
+                    "serialNumber",
+                    "remittance.SerialNumber",
+                    StringComparison.OrdinalIgnoreCase
+                );
+            }
+            else if (sorting.Contains("amount", StringComparison.OrdinalIgnoreCase))
+            {
+                return sorting.Replace(
+                    "amount",
+                    "remittance.Amount",
+                    StringComparison.OrdinalIgnoreCase
+                );
+            }
+            else if (sorting.Contains("totalAmount", StringComparison.OrdinalIgnoreCase))
+            {
+                return sorting.Replace(
+                    "totalAmount",
+                    "remittance.TotalAmount",
                     StringComparison.OrdinalIgnoreCase
                 );
             }
 
-            return $"remittance.{sorting}";
+
+            else if (sorting.Contains("receiverFullName", StringComparison.OrdinalIgnoreCase))
+            {
+                return sorting.Replace(
+                    "ReceiverFullName",
+                    "remittance.ReceiverFullName",
+                    StringComparison.OrdinalIgnoreCase
+                );
+            }
+            else if (sorting.Contains("currencyName", StringComparison.OrdinalIgnoreCase))
+            {
+                return sorting.Replace(
+                    "CurrencyName",
+                    "currency.Name",
+                    StringComparison.OrdinalIgnoreCase
+                );
+            }
+
+            
+            else if (sorting.Contains("senderName", StringComparison.OrdinalIgnoreCase))
+            {
+                return sorting.Replace(
+                    "SenderName",
+                    "senderCustomer.FirstName",
+                    StringComparison.OrdinalIgnoreCase
+                );
+            }
+            else if (sorting.Contains("creationTime", StringComparison.OrdinalIgnoreCase))
+            {
+                return sorting.Replace(
+                    "CreationTime",
+                    "remittance.CreationTime",
+                    StringComparison.OrdinalIgnoreCase
+                );
+            }
+
+            else if (sorting.Contains("state", StringComparison.OrdinalIgnoreCase))
+            {
+                return sorting.Replace(
+                    "State",
+                    $"remittanceStatus.{nameof(RemittanceStatus.State)}",
+                    StringComparison.OrdinalIgnoreCase
+                );
+            }
+            else if (sorting.Contains("statusDate", StringComparison.OrdinalIgnoreCase))
+            {
+                return sorting.Replace(
+                    "StatusDate",
+                    "remittanceStatus.CreationTime",
+                    StringComparison.OrdinalIgnoreCase
+                );
+            }
+           
+            return sorting.Replace(
+                    "CreationTime",
+                    "remittance.CreationTime",
+                    StringComparison.OrdinalIgnoreCase
+                );
         }
 
         public async Task<ListResultDto<UserLookupDto>> GetUserLookupAsync()
@@ -510,7 +590,7 @@ namespace RMS.Remittances
             );
         }
 
-        public async Task<PagedResultDto<RemittanceDto>> GetListRemittancesStatusAsync(GetRemittanceListDto input)
+        public async Task<PagedResultDto<RemittanceDto>> GetListRemittancesStatusAsync(GetRemittanceListPagedAndSortedResultRequestDto input)
         {
             IdentityUser identityUser = await _identityUserManager.GetByIdAsync(CurrentUser.GetId());
             if (identityUser.Equals(null))
@@ -518,50 +598,63 @@ namespace RMS.Remittances
                 throw new ArgumentNullException("Who Are You Please SignIn");
             }
             var roles = await _identityUserManager.GetRolesAsync(identityUser);
+
+
             //Get the IQueryable<remittance> from the repository
-            var remittancequeryable = _remittanceRepository.GetQueryableAsync().Result.ToList();
-            var currencyequeryable = _currencyRepository.GetQueryableAsync().Result.ToList();
+            var remittancequeryable = _remittanceRepository.GetQueryableAsync().Result
+                .WhereIf(!input.ReceiverFullName.IsNullOrWhiteSpace(), x => x.ReceiverFullName.Contains(input.ReceiverFullName))
+                .WhereIf(!input.Amount.Equals(0), x => x.Amount.ToString().Contains(input.Amount.ToString()))
+                .WhereIf(!input.TotalAmount.Equals(0), x => x.TotalAmount.ToString().Contains(input.TotalAmount.ToString()))
+                .WhereIf(!input.SerialNumber.IsNullOrWhiteSpace(), x => x.SerialNumber.Contains(input.SerialNumber))
+
+              .ToList();
+
+            var currencyequeryable = _currencyRepository.GetQueryableAsync().Result
+                 .WhereIf(!input.CurrencyName.IsNullOrWhiteSpace(), x => x.Name.Contains(input.CurrencyName))
+                .ToList();
+
+
             var userequeryable = _userRepository.GetQueryableAsync().Result.ToList();
             var remittance_Statusqueryable = _remittanceStatusRepository.GetQueryableAsync().Result.ToList();
-            var customerqueryable = _customerRepository.GetQueryableAsync().Result.ToList();
+            var customerqueryable = _customerRepository.GetQueryableAsync().Result
+                .WhereIf(!input.SenderName.IsNullOrWhiteSpace(), x => x.FirstName.Contains(input.SenderName)||
+               x.FatherName.Contains(input.SenderName)|| x.LastName.Contains(input.SenderName))
+                .ToList();
 
             var remittanceStatusQyery = from remittance_Status in remittance_Statusqueryable
                                         group remittance_Status by remittance_Status.RemittanceId into remittance_Status
                                         select remittance_Status.OrderByDescending(t => t.CreationTime).FirstOrDefault();
 
-            var query = from remittance in remittancequeryable
+            var query = from remittance in remittancequeryable 
                         join currency in currencyequeryable
                         on remittance.CurrencyId equals currency.Id
                         join senderCustomer in customerqueryable
                         on remittance.SenderBy equals senderCustomer.Id
-                        join receiverCustomer in customerqueryable
-                       on remittance.SenderBy equals receiverCustomer.Id
+  
                         join remittanceStatus in remittanceStatusQyery
                         on remittance.Id equals remittanceStatus.RemittanceId
-                        select new { remittance, currency, remittanceStatus, senderCustomer, receiverCustomer };
+                        select new { remittance, currency, remittanceStatus, senderCustomer };
             //Paging
-            query = query
-                .OrderBy(x => x.remittance.ReceiverFullName).ThenBy(x => x.remittanceStatus.State)
-                //.OrderBy(NormalizeSorting(input.Sorting))
+            query = query.AsQueryable()
+                //.OrderBy(x => x.remittance.ReceiverFullName).ThenBy(x => x.remittanceStatus.State)
+                .OrderBy(NormalizeSorting(input.Sorting))
                 .Skip(input.SkipCount)
                 .Take(input.MaxResultCount);
             //Convert the query result to a list of RemittanceDto objects
             var remittanceDtos = query.Select(x =>
             {
                 var remittanceDto = ObjectMapper.Map<Remittance, RemittanceDto>(x.remittance);
-
+                remittanceDto.SerialNumber = x.remittance.SerialNumber;
                 remittanceDto.CurrencyName = _currencyRepository.GetAsync(x.remittance.CurrencyId).Result.Name;
                 remittanceDto.TotalAmount = x.remittance.TotalAmount;
                 remittanceDto.StatusDate = x.remittanceStatus.CreationTime;
                 remittanceDto.State = x.remittanceStatus.State;
                 remittanceDto.SenderName = x.senderCustomer.FirstName + " " + x.senderCustomer.FatherName + " " + x.senderCustomer.LastName;
-                remittanceDto.ReceiverName = x.receiverCustomer.FirstName + " " + x.receiverCustomer.FatherName + " " + x.receiverCustomer.LastName;
                 return remittanceDto;
             }).ToList();
 
             //Get the total count with another query
             var totalCount = await _remittanceRepository.GetCountAsync();
-
             return new PagedResultDto<RemittanceDto>(
                 totalCount,
                 remittanceDtos
@@ -569,155 +662,126 @@ namespace RMS.Remittances
 
         }
 
-
-
-
-
-
+       
 
         [Authorize(RMSPermissions.Status.Create)]
 
-        public async Task<PagedResultDto<RemittanceDto>> GetListRemittancesForCreator(GetRemittanceListDto input)
+        public async Task<PagedResultDto<RemittanceDto>> GetListRemittancesForCreator(GetRemittanceListPagedAndSortedResultRequestDto input)
         {
-            try
+                bool CanCreateRemittance = await AuthorizationService
+                         .IsGrantedAsync(RMSPermissions.Remittances.Create);
+           
+            //Get the IQueryable<remittance> from the repository
+            var remittancequeryable = _remittanceRepository.GetQueryableAsync().Result
+                .WhereIf(!input.ReceiverFullName.IsNullOrWhiteSpace(), x => x.ReceiverFullName.Contains(input.ReceiverFullName))
+                .WhereIf(!input.Amount.Equals(0), x => x.Amount.ToString().Contains(input.Amount.ToString()))
+                .WhereIf(!input.TotalAmount.Equals(0), x => x.TotalAmount.ToString().Contains(input.TotalAmount.ToString()))
+                .WhereIf(!input.SerialNumber.IsNullOrWhiteSpace(), x => x.SerialNumber.Contains(input.SerialNumber))
+
+              .ToList();
+
+            var currencyequeryable = _currencyRepository.GetQueryableAsync().Result
+                 .WhereIf(!input.CurrencyName.IsNullOrWhiteSpace(), x => x.Name.Contains(input.CurrencyName))
+                .ToList();
+            var userequeryable = _userRepository.GetQueryableAsync().Result.ToList();
+            var remittance_Statusqueryable = _remittanceStatusRepository.GetQueryableAsync().Result.ToList();
+            var customerqueryable = _customerRepository.GetQueryableAsync().Result
+                .WhereIf(!input.SenderName.IsNullOrWhiteSpace(), x => x.FirstName.Contains(input.SenderName) ||
+               x.FatherName.Contains(input.SenderName) || x.LastName.Contains(input.SenderName))
+                .ToList();
+            var remittanceStatusQyery = from remittance_Status in remittance_Statusqueryable
+                                        group remittance_Status by remittance_Status.RemittanceId into remittance_Status
+                                        select remittance_Status.OrderByDescending(t => t.CreationTime).FirstOrDefault();
+            var query = from remittance in remittancequeryable
+                        join currency in currencyequeryable
+                        on remittance.CurrencyId equals currency.Id
+                        join senderCustomer in customerqueryable
+                        on remittance.SenderBy equals senderCustomer.Id
+                        join remittanceStatus in remittanceStatusQyery
+                        on remittance.Id equals remittanceStatus.RemittanceId
+                        where (remittanceStatus.State == Remittance_Status.Draft && CanCreateRemittance)
+                        select new { remittance, currency, remittanceStatus, senderCustomer };
+            //Paging
+            query = query.AsQueryable()
+                .OrderBy(NormalizeSorting(input.Sorting))
+                .Skip(input.SkipCount)
+                .Take(input.MaxResultCount);
+            //Convert the query result to a list of RemittanceDto objects
+            var remittanceDtos = query.Select(x =>
             {
-
-              bool  CanCreateRemittance =await AuthorizationService
-                        .IsGrantedAsync(RMSPermissions.Remittances.Create);
-                IdentityUser identityUser = await _identityUserManager.GetByIdAsync(CurrentUser.GetId());
-                if (identityUser.Equals(null))
-                {
-                    throw new ArgumentNullException("Who Are You Please SignIn");
-                }
-                var roles = await _identityUserManager.GetRolesAsync(identityUser);
-               
-                //Get the IQueryable<remittance> from the repository
-                var remittancequeryable = _remittanceRepository.GetQueryableAsync().Result.ToList();
-                var currencyequeryable = _currencyRepository.GetQueryableAsync().Result.ToList();
-                var userequeryable = _userRepository.GetQueryableAsync().Result.ToList();
-                var remittance_Statusqueryable = _remittanceStatusRepository.GetQueryableAsync().Result.ToList();
-                var customerqueryable = _customerRepository.GetQueryableAsync().Result.ToList();
-
-                var remittanceStatusQyery = from remittance_Status in remittance_Statusqueryable
-                                            group remittance_Status by remittance_Status.RemittanceId into remittance_Status
-                                            select remittance_Status.OrderByDescending(t => t.CreationTime).FirstOrDefault();
-
-                var query = from remittance in remittancequeryable
-                            join currency in currencyequeryable
-                            on remittance.CurrencyId equals currency.Id
-                            join senderCustomer in customerqueryable
-                            on remittance.SenderBy equals senderCustomer.Id
-                            join receiverCustomer in customerqueryable
-                           on remittance.SenderBy equals receiverCustomer.Id
-                            join remittanceStatus in remittanceStatusQyery
-                            on remittance.Id equals remittanceStatus.RemittanceId
-                            where (remittanceStatus.State == Remittance_Status.Draft && CanCreateRemittance) 
-                            select new { remittance, currency, remittanceStatus, senderCustomer, receiverCustomer };
-
-                //Paging
-                query = query
-                    .OrderBy(x => x.remittance.ReceiverFullName).ThenBy(x => x.remittanceStatus.State)
-                    //.OrderBy(NormalizeSorting(input.Sorting))
-                    .Skip(input.SkipCount)
-                    .Take(input.MaxResultCount);
-
-                //Execute the query and get a list
-                //var queryResult = await AsyncExecuter.ToListAsync(query);
-
-
-                //Convert the query result to a list of RemittanceDto objects
-                var remittanceDtos = query.Select(x =>
-                {
-                    var remittanceDto = ObjectMapper.Map<Remittance, RemittanceDto>(x.remittance);
-
-                    remittanceDto.CurrencyName = _currencyRepository.GetAsync(x.remittance.CurrencyId).Result.Name;
-                    remittanceDto.TotalAmount = x.remittance.TotalAmount;
-                    remittanceDto.StatusDate = x.remittanceStatus.CreationTime;
-                    remittanceDto.State = x.remittanceStatus.State;
-                    remittanceDto.SenderName = x.senderCustomer.FirstName + " " + x.senderCustomer.FatherName + " " + x.senderCustomer.LastName;
-                    remittanceDto.ReceiverName = x.receiverCustomer.FirstName + " " + x.receiverCustomer.FatherName + " " + x.receiverCustomer.LastName;
-                    return remittanceDto;
-                }).ToList();
-
-                //Get the total count with another query
-                var totalCount = await _remittanceRepository.GetCountAsync();
-
-                return new PagedResultDto<RemittanceDto>(
-                    totalCount,
-                    remittanceDtos
-                );
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-
-
+                var remittanceDto = ObjectMapper.Map<Remittance, RemittanceDto>(x.remittance);
+                remittanceDto.SerialNumber = x.remittance.SerialNumber;
+                remittanceDto.CurrencyName = _currencyRepository.GetAsync(x.remittance.CurrencyId).Result.Name;
+                remittanceDto.TotalAmount = x.remittance.TotalAmount;
+                remittanceDto.StatusDate = x.remittanceStatus.CreationTime;
+                remittanceDto.State = x.remittanceStatus.State;
+                remittanceDto.SenderName = x.senderCustomer.FirstName + " " + x.senderCustomer.FatherName + " " + x.senderCustomer.LastName;
+                return remittanceDto;
+            }).ToList();
+            //Get the total count with another query
+            var totalCount = await _remittanceRepository.GetCountAsync();
+            return new PagedResultDto<RemittanceDto>(
+                totalCount,
+                remittanceDtos
+            );
         }
-
-
 
         [Authorize(RMSPermissions.Status.Approved)]
 
-        public async Task<PagedResultDto<RemittanceDto>> GetListRemittancesForSupervisor(GetRemittanceListDto input)
+        public async Task<PagedResultDto<RemittanceDto>> GetListRemittancesForSupervisor(GetRemittanceListPagedAndSortedResultRequestDto input)
         {
             try
             {
-
                bool CanApprovedRemittance = await AuthorizationService
                     .IsGrantedAsync(RMSPermissions.Status.Approved);
-                IdentityUser identityUser = await _identityUserManager.GetByIdAsync(CurrentUser.GetId());
-                if (identityUser.Equals(null))
-                {
-                    throw new ArgumentNullException("Who Are You Please SignIn");
-                }
-                var roles = await _identityUserManager.GetRolesAsync(identityUser);
                 //Get the IQueryable<remittance> from the repository
-                var remittancequeryable = _remittanceRepository.GetQueryableAsync().Result.ToList();
-                var currencyequeryable = _currencyRepository.GetQueryableAsync().Result.ToList();
+                var remittancequeryable = _remittanceRepository.GetQueryableAsync().Result
+                 .WhereIf(!input.ReceiverFullName.IsNullOrWhiteSpace(), x => x.ReceiverFullName.Contains(input.ReceiverFullName))
+                 .WhereIf(!input.Amount.Equals(0), x => x.Amount.ToString().Contains(input.Amount.ToString()))
+                 .WhereIf(!input.TotalAmount.Equals(0), x => x.TotalAmount.ToString().Contains(input.TotalAmount.ToString()))
+                 .WhereIf(!input.SerialNumber.IsNullOrWhiteSpace(), x => x.SerialNumber.Contains(input.SerialNumber))
+
+               .ToList();
+
+                var currencyequeryable = _currencyRepository.GetQueryableAsync().Result
+                     .WhereIf(!input.CurrencyName.IsNullOrWhiteSpace(), x => x.Name.Contains(input.CurrencyName))
+                    .ToList();
                 var userequeryable = _userRepository.GetQueryableAsync().Result.ToList();
                 var remittance_Statusqueryable = _remittanceStatusRepository.GetQueryableAsync().Result.ToList();
-                var customerqueryable = _customerRepository.GetQueryableAsync().Result.ToList();
+                var customerqueryable = _customerRepository.GetQueryableAsync().Result
+                    .WhereIf(!input.SenderName.IsNullOrWhiteSpace(), x => x.FirstName.Contains(input.SenderName) ||
+                   x.FatherName.Contains(input.SenderName) || x.LastName.Contains(input.SenderName))
+                    .ToList();
 
                 var remittanceStatusQyery = from remittance_Status in remittance_Statusqueryable
                                             group remittance_Status by remittance_Status.RemittanceId into remittance_Status
                                             select remittance_Status.OrderByDescending(t => t.CreationTime).FirstOrDefault();
-
                 var query = from remittance in remittancequeryable
                             join currency in currencyequeryable
                             on remittance.CurrencyId equals currency.Id
                             join senderCustomer in customerqueryable
                             on remittance.SenderBy equals senderCustomer.Id
-                            join receiverCustomer in customerqueryable
-                           on remittance.SenderBy equals receiverCustomer.Id
                             join remittanceStatus in remittanceStatusQyery
                             on remittance.Id equals remittanceStatus.RemittanceId
                             where (remittanceStatus.State == Remittance_Status.Ready && CanApprovedRemittance)
-                            select new { remittance, currency, remittanceStatus, senderCustomer, receiverCustomer };
+                            select new { remittance, currency, remittanceStatus, senderCustomer };
 
                 //Paging
-                query = query
-                    .OrderBy(x => x.remittance.ReceiverFullName).ThenBy(x => x.remittanceStatus.State)
-                    //.OrderBy(NormalizeSorting(input.Sorting))
-                    .Skip(input.SkipCount)
-                    .Take(input.MaxResultCount);
-
-                //Execute the query and get a list
-                //var queryResult = await AsyncExecuter.ToListAsync(query);
-
+                query = query.AsQueryable()
+             .OrderBy(NormalizeSorting(input.Sorting))
+             .Skip(input.SkipCount)
+             .Take(input.MaxResultCount);
 
                 //Convert the query result to a list of RemittanceDto objects
                 var remittanceDtos = query.Select(x =>
                 {
                     var remittanceDto = ObjectMapper.Map<Remittance, RemittanceDto>(x.remittance);
-
                     remittanceDto.CurrencyName = _currencyRepository.GetAsync(x.remittance.CurrencyId).Result.Name;
+                    remittanceDto.SerialNumber = x.remittance.SerialNumber;
                     remittanceDto.TotalAmount = x.remittance.TotalAmount;
                     remittanceDto.StatusDate = x.remittanceStatus.CreationTime;
                     remittanceDto.State = x.remittanceStatus.State;
                     remittanceDto.SenderName = x.senderCustomer.FirstName + " " + x.senderCustomer.FatherName + " " + x.senderCustomer.LastName;
-                    remittanceDto.ReceiverName = x.receiverCustomer.FirstName + " " + x.receiverCustomer.FatherName + " " + x.receiverCustomer.LastName;
                     return remittanceDto;
                 }).ToList();
 
@@ -741,63 +805,58 @@ namespace RMS.Remittances
 
         [Authorize(RMSPermissions.Status.Released)]
 
-        public async Task<PagedResultDto<RemittanceDto>> GetListRemittancesForReleaser(GetRemittanceListDto input)
+        public async Task<PagedResultDto<RemittanceDto>> GetListRemittancesForReleaser(GetRemittanceListPagedAndSortedResultRequestDto input)
         {
             try
             {
                bool CanReleaseRemittance = await AuthorizationService
                .IsGrantedAsync(RMSPermissions.Status.Released);
-                IdentityUser identityUser = await _identityUserManager.GetByIdAsync(CurrentUser.GetId());
-                if (identityUser.Equals(null))
-                {
-                    throw new ArgumentNullException("Who Are You Please SignIn");
-                }
-                var roles = await _identityUserManager.GetRolesAsync(identityUser);
                 //Get the IQueryable<remittance> from the repository
-                var remittancequeryable = _remittanceRepository.GetQueryableAsync().Result.ToList();
-                var currencyequeryable = _currencyRepository.GetQueryableAsync().Result.ToList();
+                var remittancequeryable = _remittanceRepository.GetQueryableAsync().Result
+                      .WhereIf(!input.ReceiverFullName.IsNullOrWhiteSpace(), x => x.ReceiverFullName.Contains(input.ReceiverFullName))
+                      .WhereIf(!input.Amount.Equals(0), x => x.Amount.ToString().Contains(input.Amount.ToString()))
+                      .WhereIf(!input.TotalAmount.Equals(0), x => x.TotalAmount.ToString().Contains(input.TotalAmount.ToString()))
+                      .WhereIf(!input.SerialNumber.IsNullOrWhiteSpace(), x => x.SerialNumber.Contains(input.SerialNumber))
+
+                    .ToList();
+
+                var currencyequeryable = _currencyRepository.GetQueryableAsync().Result
+                     .WhereIf(!input.CurrencyName.IsNullOrWhiteSpace(), x => x.Name.Contains(input.CurrencyName))
+                    .ToList();
                 var userequeryable = _userRepository.GetQueryableAsync().Result.ToList();
                 var remittance_Statusqueryable = _remittanceStatusRepository.GetQueryableAsync().Result.ToList();
-                var customerqueryable = _customerRepository.GetQueryableAsync().Result.ToList();
-
+                var customerqueryable = _customerRepository.GetQueryableAsync().Result
+                    .WhereIf(!input.SenderName.IsNullOrWhiteSpace(), x => x.FirstName.Contains(input.SenderName) ||
+                   x.FatherName.Contains(input.SenderName) || x.LastName.Contains(input.SenderName))
+                    .ToList();
                 var remittanceStatusQyery = from remittance_Status in remittance_Statusqueryable
                                             group remittance_Status by remittance_Status.RemittanceId into remittance_Status
                                             select remittance_Status.OrderByDescending(t => t.CreationTime).FirstOrDefault();
-
                 var query = from remittance in remittancequeryable
                             join currency in currencyequeryable
                             on remittance.CurrencyId equals currency.Id
                             join senderCustomer in customerqueryable
                             on remittance.SenderBy equals senderCustomer.Id
-                            join receiverCustomer in customerqueryable
-                           on remittance.SenderBy equals receiverCustomer.Id
                             join remittanceStatus in remittanceStatusQyery
                             on remittance.Id equals remittanceStatus.RemittanceId
                             where (remittanceStatus.State == Remittance_Status.Approved && CanReleaseRemittance)
-                            select new { remittance, currency, remittanceStatus, senderCustomer, receiverCustomer };
-
+                            select new { remittance, currency, remittanceStatus, senderCustomer };
                 //Paging
-                query = query
-                    .OrderBy(x => x.remittance.ReceiverFullName).ThenBy(x => x.remittanceStatus.State)
-                    //.OrderBy(NormalizeSorting(input.Sorting))
+                query = query.AsQueryable()
+                    .OrderBy(NormalizeSorting(input.Sorting))
                     .Skip(input.SkipCount)
                     .Take(input.MaxResultCount);
-
-                //Execute the query and get a list
-                //var queryResult = await AsyncExecuter.ToListAsync(query);
-
-
                 //Convert the query result to a list of RemittanceDto objects
                 var remittanceDtos = query.Select(x =>
                 {
                     var remittanceDto = ObjectMapper.Map<Remittance, RemittanceDto>(x.remittance);
-
                     remittanceDto.CurrencyName = _currencyRepository.GetAsync(x.remittance.CurrencyId).Result.Name;
+                    remittanceDto.SerialNumber = x.remittance.SerialNumber;
                     remittanceDto.TotalAmount = x.remittance.TotalAmount;
                     remittanceDto.StatusDate = x.remittanceStatus.CreationTime;
                     remittanceDto.State = x.remittanceStatus.State;
                     remittanceDto.SenderName = x.senderCustomer.FirstName + " " + x.senderCustomer.FatherName + " " + x.senderCustomer.LastName;
-                    remittanceDto.ReceiverName = x.receiverCustomer.FirstName + " " + x.receiverCustomer.FatherName + " " + x.receiverCustomer.LastName;
+                    //remittanceDto.ReceiverName = x.receiverCustomer.FirstName + " " + x.receiverCustomer.FatherName + " " + x.receiverCustomer.LastName;
                     return remittanceDto;
                 }).ToList();
 

@@ -12,12 +12,6 @@ namespace RMS.Customers
     {
         Task<Customer> FindByFullNameAsync(string firstName, string lastName,string fatherName,string motherName);
 
-        //Task<List<Customer>> GetListAsync(
-        //    int skipCount,
-        //    int maxResultCount,
-        //    string sorting,
-        //    string filter = null
-        //);
         Task<List<Customer>> GetListAsync(
      int skipCount,
      int maxResultCount,

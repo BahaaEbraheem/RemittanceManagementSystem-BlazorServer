@@ -43,16 +43,20 @@
     <CardBody>
         <DataGrid TItem="RemittanceDto"
                   Data="RemittanceList"
+                  Filterable
+                  FilterMethod="DataGridFilterMethod.StartsWith"
+                  Responsive
                   ReadData="OnDataGridReadAsync"
                   TotalItems="TotalCount"
                   ShowPager="true"
-                  PageSize="PageSize">
+                  PageSize="PageSize"
+                  Sortable="true">
                   
             <DataGridColumns>
                 <DataGridColumn Width="150px"
                                 TItem="RemittanceDto"
                                 Field="@nameof(RemittanceDto.Id)"
-                                Sortable="false"
+                                Sortable="true"
                                 Caption="@L["Actions"]">
                     <DisplayTemplate>
                         <Dropdown>
@@ -67,6 +71,9 @@
                         </Dropdown>
                     </DisplayTemplate>
                 </DataGridColumn>
+                <DataGridColumn TItem="RemittanceDto"
+                                Field="@nameof(RemittanceDto.SerialNumber)"
+                                Caption="@L["SerialNumber"]"></DataGridColumn>
                 <DataGridColumn TItem="RemittanceDto"
                                 Field="@nameof(RemittanceDto.Amount)"
                                 Caption="@L["Amount"]"></DataGridColumn>

@@ -70,6 +70,8 @@ namespace RMS.Blazor.Pages.Remittances
         private Validations CreateValidationsRef;
 
         private Validations EditValidationsRef;
+        GetRemittanceListPagedAndSortedResultRequestDto getRemittanceListPagedAndSortedResultRequestDto
+           = new GetRemittanceListPagedAndSortedResultRequestDto();
         private bool CanCreateRemittance { get; set; }
         private bool CanEditRemittance { get; set; }
         private bool CanDeleteRemittance { get; set; }
@@ -85,7 +87,7 @@ namespace RMS.Blazor.Pages.Remittances
 
         protected override async Task OnInitializedAsync()
         {
-            await GetRemittancesAsync();
+            await GetRemittancesAsync(getRemittanceListPagedAndSortedResultRequestDto);
             await GetCustomersAsync(customerPagedAndSortedResultRequestDto);
             currencyList = (await RemittanceAppService.GetCurrencyLookupAsync()).Items;
             await SetPermissionsAsync();
@@ -112,29 +114,74 @@ namespace RMS.Blazor.Pages.Remittances
 
         }
 
-
-        private async Task GetRemittancesAsync()
-        {
-            var result = await RemittanceAppService.GetListRemittancesForCreator(
-                new GetRemittanceListDto
-                {
-                    MaxResultCount = PageSize,
-                    SkipCount = CurrentPage * PageSize,
-                    Sorting = CurrentSorting
-                }
-            );
-            RemittanceList = result.Items;
-            TotalCount = (int)result.TotalCount;
-        }
         private async Task OnDataGridReadAsync(DataGridReadDataEventArgs<RemittanceDto> e)
         {
+            GetRemittanceListPagedAndSortedResultRequestDto getRemittanceListPagedAndSortedResultRequestDto =
+                new GetRemittanceListPagedAndSortedResultRequestDto();
             CurrentSorting = e.Columns
+                .Where(c => c.SortDirection != SortDirection.Default)
                 .Select(c => c.Field + (c.SortDirection == SortDirection.Descending ? " DESC" : ""))
                 .JoinAsString(",");
             CurrentPage = e.Page - 1;
-            await GetRemittancesAsync();
+
+
+            var receiverFullName = e.Columns.FirstOrDefault(c => c.SearchValue != null && c.Field == "ReceiverFullName");
+            if (receiverFullName != null)
+                getRemittanceListPagedAndSortedResultRequestDto.ReceiverFullName = receiverFullName.SearchValue.ToString();
+
+            var currencyName = e.Columns.FirstOrDefault(c => c.SearchValue != null && c.Field == "CurrencyName");
+            if (currencyName != null)
+                getRemittanceListPagedAndSortedResultRequestDto.CurrencyName = currencyName.SearchValue.ToString();
+
+            var senderName = e.Columns.FirstOrDefault(c => c.SearchValue != null && c.Field == "SenderName");
+            if (senderName != null)
+                getRemittanceListPagedAndSortedResultRequestDto.SenderName = senderName.SearchValue.ToString();
+
+
+            var amount = e.Columns.FirstOrDefault(c => c.SearchValue != null && c.Field == "Amount");
+            if (amount != null)
+            {
+                if (amount.SearchValue.ToString() != "")
+                    getRemittanceListPagedAndSortedResultRequestDto.Amount = double.Parse((string)amount.SearchValue);
+            }
+            var totalAmount = e.Columns.FirstOrDefault(c => c.SearchValue != null && c.Field == "TotalAmount");
+            if (totalAmount != null)
+            {
+                if (totalAmount.SearchValue.ToString() != "")
+                    getRemittanceListPagedAndSortedResultRequestDto.TotalAmount = double.Parse((string)totalAmount.SearchValue);
+            }
+
+            var serialNumber = e.Columns.FirstOrDefault(c => c.SearchValue != null && c.Field == "SerialNumber");
+            if (serialNumber != null)
+                getRemittanceListPagedAndSortedResultRequestDto.SerialNumber = serialNumber.SearchValue.ToString();
+
+            await GetRemittancesAsync(getRemittanceListPagedAndSortedResultRequestDto);
             await InvokeAsync(StateHasChanged);
         }
+     
+        private async Task GetRemittancesAsync(GetRemittanceListPagedAndSortedResultRequestDto getRemittanceListPagedAndSortedResultRequestDto)
+        {
+
+            PagedResultDto<RemittanceDto> result = new PagedResultDto<RemittanceDto>();
+
+            result = await RemittanceAppService.GetListRemittancesForCreator(
+               new GetRemittanceListPagedAndSortedResultRequestDto
+               {
+                   ReceiverFullName = getRemittanceListPagedAndSortedResultRequestDto.ReceiverFullName,
+                   SenderName = getRemittanceListPagedAndSortedResultRequestDto.SenderName,
+                   CurrencyName = getRemittanceListPagedAndSortedResultRequestDto.CurrencyName,
+                   Amount = getRemittanceListPagedAndSortedResultRequestDto.Amount,
+                   TotalAmount = getRemittanceListPagedAndSortedResultRequestDto.TotalAmount,
+                   SerialNumber = getRemittanceListPagedAndSortedResultRequestDto.SerialNumber,
+
+                   MaxResultCount = PageSize,
+                   SkipCount = CurrentPage * PageSize,
+                   Sorting = CurrentSorting
+               }
+           );
+            RemittanceList = result.Items;
+            TotalCount = (int)result.TotalCount;
+         }
         private async Task OnDataGridCustomersReadAsync(DataGridReadDataEventArgs<CustomerDto> e_Customer)
         {
 
@@ -315,7 +362,7 @@ namespace RMS.Blazor.Pages.Remittances
             }
 
             await RemittanceAppService.DeleteAsync(remittance.Id);
-            await GetRemittancesAsync();
+            await GetRemittancesAsync(getRemittanceListPagedAndSortedResultRequestDto);
         }
 
         private void CloseEditRemittanceModal()
@@ -348,14 +395,14 @@ namespace RMS.Blazor.Pages.Remittances
                     return;
                 }
                 await RemittanceAppService.CreateAsync(NewRemittance);
-                await GetRemittancesAsync();
+                await GetRemittancesAsync(getRemittanceListPagedAndSortedResultRequestDto);
                 await CreateRemittanceModal.Hide();
             }
         }
         private async Task UpdateRemittanceToReadyAsync(RemittanceDto Remittance)
         {
             await RemittanceAppService.SetReady(Remittance);
-            await GetRemittancesAsync();
+            await GetRemittancesAsync(getRemittanceListPagedAndSortedResultRequestDto);
 
         }
 
@@ -365,7 +412,7 @@ namespace RMS.Blazor.Pages.Remittances
             if (await EditValidationsRef.ValidateAll())
             {
                 await RemittanceAppService.UpdateAsync(EditingRemittanceId, editingRemittance);
-                await GetRemittancesAsync();
+                await GetRemittancesAsync(getRemittanceListPagedAndSortedResultRequestDto);
                 await EditRemittanceModal.Hide();
             }
         }

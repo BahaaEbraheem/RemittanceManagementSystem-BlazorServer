@@ -68,6 +68,7 @@ namespace RMS
             CreateMap<CurrencyPagedAndSortedResultRequestDto, Currency>();
             CreateMap<CustomerPagedAndSortedResultRequestDto, Customer>();
 
+            CreateMap<GetRemittanceListPagedAndSortedResultRequestDto, Remittance>();
 
 
         }

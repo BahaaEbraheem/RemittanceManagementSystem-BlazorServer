@@ -32,11 +32,14 @@
     <CardBody>
         <DataGrid TItem="RemittanceDto"
                   Data="RemittanceList"
-                  Filterable="true"
+                     Filterable
+                     FilterMethod="DataGridFilterMethod.StartsWith"
+                     Responsive
                   ReadData="OnDataGridReadAsync"
                   TotalItems="TotalCount"
                   ShowPager="true"
-                  PageSize="PageSize">
+                  PageSize="PageSize"
+                  Sortable="true">
                   
             <DataGridColumns>
                 <DataGridColumn TItem="RemittanceDto"
@@ -52,10 +55,10 @@
                                 Field="@nameof(RemittanceDto.ReceiverFullName)"
                                 Caption="@L["ReceiverFullName"]"></DataGridColumn>
                 <DataGridColumn TItem="RemittanceDto"
-                Field="@nameof(RemittanceDto.CurrencyName)"
+                                Field="@nameof(RemittanceDto.CurrencyName)"
                                 Caption="@L["Currency"]"></DataGridColumn>
                 <DataGridColumn TItem="RemittanceDto"
-             Field="@nameof(RemittanceDto.SenderName)"
+                                Field="@nameof(RemittanceDto.SenderName)"
                                 Caption="@L["SenderName"]"></DataGridColumn>
                 <DataGridColumn TItem="RemittanceDto"
                                 Field="@nameof(RemittanceDto.CreationTime)"

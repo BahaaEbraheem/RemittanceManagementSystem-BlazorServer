@@ -9,6 +9,7 @@ using Volo.Abp.Domain.Repositories.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using static RMS.Enums.Enums;
+using RMS.Customers;
 
 namespace RMS.Remittances
 {
@@ -38,22 +39,30 @@ namespace RMS.Remittances
          
         }
 
-        public async Task<List<Remittance>> GetListAsync(
-            int skipCount,
-            int maxResultCount,
-            string sorting,
-            string filter = null)
+        public async Task<List<Remittance>> GetListRemittancesStatusAsync(int skipCount, int maxResultCount, string sorting, Remittance filter)
         {
             var dbSet = await GetDbSetAsync();
-            return await dbSet
-                .WhereIf(
-                    !filter.IsNullOrWhiteSpace(),
-                    Remittance => Remittance.SerialNumber.Contains(filter)
-                 )
-                .OrderBy(sorting)
-                .Skip(skipCount)
-                .Take(maxResultCount)
+
+            var remittances = await dbSet
+                .WhereIf(!filter.ReceiverFullName.IsNullOrWhiteSpace(), x => x.ReceiverFullName.Contains(filter.ReceiverFullName))
+                .WhereIf(!filter.Amount.Equals(0), x => x.Amount.ToString().Contains(filter.Amount.ToString()))
+                .WhereIf(!filter.TotalAmount.Equals(0), x => x.TotalAmount.ToString().Contains(filter.TotalAmount.ToString()))
+                .WhereIf(!filter.SerialNumber.IsNullOrWhiteSpace(), x => x.SerialNumber.Contains(filter.SerialNumber))
+                .OrderBy(sorting).Skip(skipCount).Take(maxResultCount).ToListAsync();
+            return remittances;
+
+        }
+
+        public async Task<int> GetTotalCountAsync(Remittance filter)
+        {
+            var dbSet = await GetDbSetAsync();
+            var remittances = await dbSet
+             .WhereIf(!filter.ReceiverFullName.IsNullOrWhiteSpace(), x => x.ReceiverFullName.Contains(filter.ReceiverFullName))
+                .WhereIf(!filter.Amount.Equals(0), x => x.Amount.ToString().Contains(filter.Amount.ToString()))
+                .WhereIf(!filter.TotalAmount.Equals(0), x => x.TotalAmount.ToString().Contains(filter.TotalAmount.ToString()))
+                .WhereIf(!filter.SerialNumber.IsNullOrWhiteSpace(), x => x.SerialNumber.Contains(filter.SerialNumber))
                 .ToListAsync();
+            return remittances.Count;
         }
 
         public async Task<Remittance> FindRemittance_StillDraftAsync(double amount, string receiverName)

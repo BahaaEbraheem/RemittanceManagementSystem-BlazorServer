@@ -13,10 +13,10 @@ namespace RMS.Remittances
         Task<RemittanceDto> GetAsync(Guid id);
 
         Task<PagedResultDto<RemittanceDto>> GetListAsync(GetRemittanceListDto input);
-        Task<PagedResultDto<RemittanceDto>> GetListRemittancesStatusAsync(GetRemittanceListDto input);
-        Task<PagedResultDto<RemittanceDto>> GetListRemittancesForCreator(GetRemittanceListDto input);
-        Task<PagedResultDto<RemittanceDto>> GetListRemittancesForSupervisor(GetRemittanceListDto input);
-        Task<PagedResultDto<RemittanceDto>> GetListRemittancesForReleaser(GetRemittanceListDto input);
+        Task<PagedResultDto<RemittanceDto>> GetListRemittancesStatusAsync(GetRemittanceListPagedAndSortedResultRequestDto input);
+        Task<PagedResultDto<RemittanceDto>> GetListRemittancesForCreator(GetRemittanceListPagedAndSortedResultRequestDto input);
+        Task<PagedResultDto<RemittanceDto>> GetListRemittancesForSupervisor(GetRemittanceListPagedAndSortedResultRequestDto input);
+        Task<PagedResultDto<RemittanceDto>> GetListRemittancesForReleaser(GetRemittanceListPagedAndSortedResultRequestDto input);
         
 
 
