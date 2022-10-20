@@ -6,6 +6,6 @@ namespace RMS.Localization
     [LocalizationResourceName("RMS")]
     public class RMSResource
     {
-
+ 
     }
 }

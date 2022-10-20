@@ -33,9 +33,12 @@ using static RMS.Permissions.RMSPermissions;
 using Volo.Abp;
 using Volo.Abp.AspNetCore.Components.Web.BasicTheme.Themes.Basic;
 using RMS.Blazor.Pages.Customers;
+using Volo.Abp.DependencyInjection;
+using Volo.Abp.AspNetCore.Components.Server.BasicTheme.Themes.Basic;
 
 namespace RMS.Blazor.Pages.Remittances
 {
+
     public partial class Remittances
     {
         [Inject]
@@ -180,7 +183,7 @@ namespace RMS.Blazor.Pages.Remittances
                }
            );
             RemittanceList = result.Items;
-            TotalCount = (int)result.TotalCount;
+            TotalCount = (int) result.TotalCount;
          }
         private async Task OnDataGridCustomersReadAsync(DataGridReadDataEventArgs<CustomerDto> e_Customer)
         {

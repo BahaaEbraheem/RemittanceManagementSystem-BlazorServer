@@ -11,11 +11,17 @@ using Microsoft.CodeAnalysis;
 using Microsoft.AspNetCore.Authorization;
 using RMS.Customers.Dtos;
 using RMS.Permissions;
+using Volo.Abp.AspNetCore.Components.Web.BasicTheme.Themes.Basic;
+using Volo.Abp.DependencyInjection;
+using Volo.Abp.Ui.Branding;
+using Microsoft.AspNetCore.Components;
 
 namespace RMS.Blazor.Pages.Currencies
 {
+
     public partial class Currencies
     {
+ 
         private bool CanCreateCurrency { get; set; }
         private bool CanEditCurrency { get; set; }
         private bool CanDeleteCurrency { get; set; }

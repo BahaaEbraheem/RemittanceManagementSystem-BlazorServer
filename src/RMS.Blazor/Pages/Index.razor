@@ -5,7 +5,14 @@
 @using Microsoft.AspNetCore.Authorization
 
 
+<style>
+    body {  
+background-image: url('r (2).png');
+}
 
+</style>
+
+<body>
 <div class="container">
     <div class="p-5 text-center">
         <Badge Color="Color.Success" class="mb-4">
@@ -18,9 +25,16 @@
 
         @if (!CurrentUser.IsAuthenticated)
         {
-<a class="btn btn-primary" href="Account/Login"><i class="fa fa-sign-in"></i> @L["Login"]</a>}
+<a class="btn btn-primary" href="Account/Login"><i class="fa fa-sign-in"></i> @L["Login"]</a>
+        }
     </div>
+    </div>
+</body>
 
+
+
+
+@*
     <div class="card">
         <div class="card-body">
             <div class="row">
@@ -176,5 +190,5 @@
             <a href="https://twitter.com/abpcommercial" target="_blank" class="mx-2"><i class="fab fa-twitter"></i><span class="text-secondary"> Abp Commercial</span></a>
             <a href="https://github.com/abpframework/abp" target="_blank" class="mx-2"><i class="fab fa-github"></i><span class="text-secondary"> abpframework</span></a>
         </p>
-    </div>
-</div>
+    </div>*@
+

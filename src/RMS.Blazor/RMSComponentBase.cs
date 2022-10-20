@@ -3,6 +3,7 @@ using RMS.Customers.Dtos;
 using RMS.Localization;
 using System;
 using Volo.Abp.AspNetCore.Components;
+using Volo.Abp.Ui.Branding;
 
 namespace RMS.Blazor
 {
@@ -13,7 +14,6 @@ namespace RMS.Blazor
         {
             LocalizationResource = typeof(RMSResource);
         }
-
-   
+ 
     }
 }

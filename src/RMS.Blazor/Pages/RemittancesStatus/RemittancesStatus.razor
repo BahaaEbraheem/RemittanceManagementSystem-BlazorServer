@@ -1,5 +1,6 @@
 ﻿@page "/remittancesstatus"
 
+@using Volo.Abp.AspNetCore.Components.Web.BasicTheme.Themes.Basic
 @using Volo.Abp.MultiTenancy
 @using RMS.Remittances
 @using RMS.Remittances.Dtos
@@ -12,6 +13,9 @@
 @using RMS.Localization
 @inherits RMSComponentBase
 @inject AuthenticationStateProvider AuthenticationStateProvider
+
+@using Volo.Abp.AspNetCore.Components.Server.BasicTheme.Themes.Basic;
+@using Volo.Abp.DependencyInjection;
 @using Microsoft.AspNetCore.Authorization
 @inject AbpBlazorMessageLocalizerHelper<RMSResource> LH
 @inject IStringLocalizer<RMSResource> L

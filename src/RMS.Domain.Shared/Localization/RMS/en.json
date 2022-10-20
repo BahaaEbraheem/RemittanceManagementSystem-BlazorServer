@@ -103,7 +103,29 @@
     "ChooseInternalOrExternal?": "Choose Internal Or External ?",
 
 
-    "Menu:RemittancesStatus": "Remittances Status"
+    "Menu:RemittancesStatus": "Remittances Status",
+
+
+
+
+
+    "Amount": "Amount",
+    "TotalAmount": "Total Amount",
+    "SerialNumber": "Serial Number",
+    "SenderName": "Sender Name",
+    "ReceiverFullName": "Receiver Full Name",
+    "CurrencyName": "Currency Name",
+    "State": "State",
+    "StatusDate": "Status Date",
+
+
+    "Currency": "Currency",
+    "SenderBy": "Sender By",
+    "Address": "Address",
+    "ReceiverBy": "Receiver By"
+
+
+
 
   }
 }

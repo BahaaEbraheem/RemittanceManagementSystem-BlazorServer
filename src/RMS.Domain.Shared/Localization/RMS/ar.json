@@ -3,6 +3,122 @@
   "texts": {
     "Menu:Home": "الرئيسية",
     "Welcome": "مرحبا",
-    "LongWelcomeMessage": "مرحبا بكم في التطبيق. هذا مشروع بدء تشغيل يعتمد على إطار عمل ABP. لمزيد من المعلومات ، يرجى زيارة abp.io."
+    "LongWelcomeMessage": "مرحبا بكم في التطبيق. هذا مشروع بدء تشغيل يعتمد على إطار عمل ABP. لمزيد من المعلومات ، يرجى زيارة abp.io.",
+
+
+    "Currencies": "العملات",
+
+    "RMS:00001": "يوجد مسبقا عملة بنفس الاسم: {name}",
+    "RMS:00002": "يوجد مسبقا زبون بنفس الاسم: {name}",
+    "RMS:00003": "تاريخ ميلاد الزبون يجب أن لايكون أكبر من تاريخ اليوم: {birthDate}",
+    "RMS:00004": "الحوالة تمت الموافقة عليها لذلك لايمكنك التعديل",
+    "RMS:00005": "هذه العملة مستخدمة سابقا في حوالة رقمها  : {remittanceSerial} ",
+    "RMS:00006": "هذا الزبون ( {customerName} ) مستخدم من قبل الحوالة مسبقا ",
+    "RMS:00007": "الزبون لايمكن اختياره لان عمره أصغر من 18 ",
+
+
+    "Menu:RMS": "نظام إدارة الحوالات",
+    "Menu:Currencies": "العملات",
+    "Menu:Customers": "الزبائن",
+    "Menu:Remittances": "الحوالات المنشأة",
+    "Menu:ReadyRemittances": "الحوالات الجاهزة",
+    "Menu:ApprovedRemittances": "الحوالات الموافقة",
+    "CreatedRemittances": "الحوالات المنشأة",
+    "ApprovedRemittances": "الحوالات الموافقة",
+    "ReadyRemittances": "الحوالات الجاهزة",
+    "Menu:RemittancesStatus": "حالة الحوالات",
+
+
+
+
+    "CurrencyDeletionConfirmationMessage": "هل أنت متأكد من حذف هذه العملة '{0}'?",
+    "CustomerDeletionConfirmationMessage": "هل أنت متأكد من حذف هذا الزبون '{0}'?",
+    "RemittanceDeletionConfirmationMessage": "هل أنت متأكد من حذف هذه الحوالة '{0}'?",
+    "AmessageConfirmingThatTheRemittanceIsReady": "هل أنت متأكد من تجهيز هذه الحوالة '{0}'?",
+
+
+    "Permission:RMS": "نظام إدارة الحوالات",
+    "Permission:Currencies": "إدارة العملات",
+    "Permission:Currencies.Create": "إنشاء عملات جديدة",
+    "Permission:Currencies.Edit": "التعديل على العملات",
+    "Permission:Currencies.Delete": "حذف العملات",
+
+    "Permission:Customers": "إدارة الزبائن",
+    "Permission:Customers.Create": "إنشاء الزبائن",
+    "Permission:Customers.Edit": "التعديل على الزبائن",
+    "Permission:Customers.Delete": "حذف الزبائن",
+
+    "Permission:Remittances": "إدارة الحوالات",
+    "Permission:Remittances.Create": "إنشاء حوالة",
+    "Permission:Remittances.Edit": "التعديل على حوالة",
+    "Permission:Remittances.Delete": "حذف حوالة",
+
+
+
+    "Actions": "إجراءات",
+    "Close": "إغلاق",
+    "Delete": "حذف",
+    "Edit": "تعديل",
+    "Name": "الاسم",
+    "NewCurrency": "عملة جديدة",
+    "Code": "الكود",
+    "Type": "النوع",
+    "Symbol": "الرمز",
+    "CreationTime": "وقت الإنشاء",
+    "AreYouSure": "هل أنت متأكد ؟",
+    "AreYouSureToDelete": "هل أنت متأكد من حذف هذا العنصر",
+
+
+    "Enum:RemittanceType:1": "داخلية",
+    "Enum:RemittanceType:2": "خارجية",
+
+
+    "Enum:Gender:1": "ذكر",
+    "Enum:Gender:2": "أنثى",
+
+
+    "Enum:Remittance_Status:1": "مسودة",
+    "Enum:Remittance_Status:2": "جاهزة",
+    "Enum:Remittance_Status:3": "موافقة",
+    "Enum:Remittance_Status:4": "مسلمة",
+
+
+    //Customers
+    "FirstName": "الاسم الاول",
+    "LastName": "الاسم الاخير",
+    "FatherName": "اسم الأب",
+    "MotherName": "اسم الأم",
+    "BirthDate": "تاريخ الميلاد",
+    "Phone": "رقم الهاتف",
+    "Gender": "الجنس",
+    "NewCustomer": "زبون جديد",
+
+    //Remittances
+    "Remittance": "الحوالة",
+    "Remittances": "الحوالات",
+    "NewRemittance": "حوالة جديدة",
+    "CreatrorName": "اسم المنشأ",
+    "PickAnTypeOfRemittance": "اختر نوع لهذه الحوالة",
+    "PickAnCurrency": "اختر عملة",
+    //Currency
+    "ChooseInternalOrExternal?": "اختر النوع حوالة داخلية أم خارجية",
+    "Amount": "الكمية",
+    "TotalAmount": "الكمية الكلية",
+    "SerialNumber": "الرقم التسلسلي",
+    "SenderName": "اسم المرسل",
+    "ReceiverFullName": "اسم المستقبل ",
+    "CurrencyName": "اسم العملة",
+    "State": "الحالة",
+    "StatusDate": "تاريخ الحالة",
+    "Ready": "جاهزة",
+    "Approve": "موافقة",
+    "Release": "تسليم",
+    "Currency": "العملة",
+    "SenderBy": "مرسلة من قبل",
+    "Address": " العنوان",
+    "ReceiverBy": "مسلمة إلى"
+
+
+
   }
 }

@@ -1,16 +1,21 @@
 ﻿@page "/currencies"
 @using RMS.Blazor
 @namespace RMS.Blazor.Pages.Currencies
+@using Volo.Abp.AspNetCore.Components.Web.BasicTheme.Themes.Basic
 @using Volo.Abp.MultiTenancy
 @using Volo.Abp.AspNetCore.Components.Web
 @using Volo.Abp.Application.Dtos
 @using RMS.Currencies
 @using RMS.Currencies.Dtos
 @using RMS.Localization
+@using Blazorise
 @using Microsoft.Extensions.Localization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@using Microsoft.AspNetCore.Authorization
 @inject AbpBlazorMessageLocalizerHelper<RMSResource> LH
 @inject IStringLocalizer<RMSResource> L
 @inherits AbpCrudPageBase<ICurrencyAppService, CurrencyDto, Guid, CurrencyPagedAndSortedResultRequestDto, CreateUpdateCurrencyDto>
+
 
 
 <Card>

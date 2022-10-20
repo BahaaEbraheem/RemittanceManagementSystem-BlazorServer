@@ -11,6 +11,7 @@
 @using RMS.Customers.Dtos
 @using RMS.Localization
 @using Volo.Abp.AspNetCore.Components.Web.BasicTheme.Themes.Basic
+
 @using Volo.Abp.Domain.Entities
 @using Blazorise
 @using Microsoft.JSInterop
@@ -19,12 +20,12 @@
 @using Volo.Abp.DependencyInjection
 @using Volo.Abp.AspNetCore.Components.Server.BasicTheme.Themes.Basic
 @using Volo.Abp.AspNetCore.Components.Server.BasicTheme.Bundling
+
+
 @inherits RMSComponentBase
-@attribute [Dependency(ReplaceServices = true)]
 
 @inject AbpBlazorMessageLocalizerHelper<RMSResource> LH
 @inject IStringLocalizer<RMSResource> L
-
 @inject IRemittanceAppService RemittanceAppService
 @inject ICustomerAppService CustomerAppService
 @inject NavigationManager NavigationManager
