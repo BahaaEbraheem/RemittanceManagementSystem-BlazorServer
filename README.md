@@ -8,3 +8,4 @@ For Run Application:
  7- second command:   dotnet tool install -g Volo.Abp.Cli --version 5.3.4
  8- third command :   abp install-libs --version 5.3.4
  9- fourth command :  dotnet build /graphBuild
+ 10- put RMS.Blazor startup Project And Run Application
