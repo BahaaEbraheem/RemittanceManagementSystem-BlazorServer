@@ -1,3 +1,5 @@
+Remittance Management System  (نظام إدارة الحوالات) 
+
 For Run Application:
  1- first change connection string in appsettings.json in RMS.Blazor and RMS.DbMigrator app.
  2- put RMS.Blazor startup Project and RMS.EntityFrameworkcore in default project in package manager console to Update-Database .
