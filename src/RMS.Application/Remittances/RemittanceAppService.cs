@@ -89,7 +89,7 @@ namespace RMS.Remittances
                             var checkAge = DateTime.Now.Year - customer.BirthDate.Year;
                             if ((customer.BirthDate > DateTime.Now) || (checkAge < 18))
                             {
-                                throw new CustomerDontPassBecauseHisAgeSmallerThan18Exception(customer.FirstName + " " + customer.LastName);
+                                throw new UserFriendlyException("Sender Age Smaller Than 18");
                             }
                         }
                     }
@@ -100,7 +100,7 @@ namespace RMS.Remittances
                         var currency = await _currencyRepository.GetAsync(input.CurrencyId);
                         if (currency == null || currency.Name != "Syrian Pound")
                         {
-                            throw new Exception("The Currency Must Be Syrian Pound");
+                            throw new UserFriendlyException("The Currency Must Be Syrian Pound");
                         }
                     }
                     else if (!input.CurrencyId.Equals(null) && input.Type == RemittanceType.External)
@@ -108,13 +108,13 @@ namespace RMS.Remittances
                         var currency = await _currencyRepository.GetAsync(input.CurrencyId);
                         if (currency == null || currency.Name == "Syrian Pound")
                         {
-                            throw new Exception("The Currency Should Not Be Syrian Pound");
+                            throw new UserFriendlyException("The Currency Should Not Be Syrian Pound");
                         }
                     }
                     //check if Remittance contain Receiver Customer
                     if (input.ReceiverBy != null)
                     {
-                        throw new Exception("The Receiver Customer Should be passed on Release Remittance no in Created Remittance");
+                        throw new UserFriendlyException("The Receiver Customer Should be passed on Release Remittance no in Created Remittance");
                     }
                     var remittance = await _remittanceManager.CreateAsync(
                      input.Amount, input.Type,
@@ -209,7 +209,7 @@ namespace RMS.Remittances
                 IdentityUser identityUser = await _identityUserManager.GetByIdAsync(CurrentUser.GetId());
                 if (identityUser.Equals(null))
                 {
-                    throw new ArgumentNullException("Who Are You Please SignIn");
+                    throw new UserFriendlyException("Who Are You Please SignIn");
                 }
                 var roles = await _identityUserManager.GetRolesAsync(identityUser);
                 //Get the IQueryable<remittance> from the repository
@@ -300,7 +300,7 @@ namespace RMS.Remittances
                                 var checkAge = DateTime.Now.Year - customer.BirthDate.Year;
                                 if ((customer.BirthDate > DateTime.Now) || (checkAge < 18))
                                 {
-                                    throw new CustomerDontPassBecauseHisAgeSmallerThan18Exception(customer.FirstName + " " + customer.LastName);
+                                    throw new UserFriendlyException("Sender Age Smaller Than 18");
                                 }
                             }
 
@@ -311,7 +311,7 @@ namespace RMS.Remittances
                             var currency = await _currencyRepository.GetAsync(input.CurrencyId);
                             if (currency == null || currency.Name != "Syrian Pound")
                             {
-                                throw new Exception("The Currency Must Be Syrian Pound Exeption");
+                                throw new UserFriendlyException("The Currency Must Be Syrian Pound Exeption");
                             }
                         }
                         else if (!input.CurrencyId.Equals(null) && input.Type == RemittanceType.External)
@@ -319,13 +319,13 @@ namespace RMS.Remittances
                             var currency = await _currencyRepository.GetAsync(input.CurrencyId);
                             if (currency == null || currency.Name == "Syrian Pound")
                             {
-                                throw new Exception("The Currency Should Not Be Syrian Pound");
+                                throw new UserFriendlyException("The Currency Should Not Be Syrian Pound");
                             }
                         }
                         //check if Remittance contain Receiver Customer
                         if (input.ReceiverBy != null)
                         {
-                            throw new Exception("The Receiver Customer Should be passed on Release Remittance no in Created Remittance");
+                            throw new UserFriendlyException("The Receiver Customer Should be passed on Release Remittance no in Created Remittance");
                         }
                         var remittance = await _remittanceRepository.GetAsync(id);
                         var CheckRemittanceIfApproved = await _remittanceManager.UpdateAsync(remittance,
@@ -595,7 +595,7 @@ namespace RMS.Remittances
             IdentityUser identityUser = await _identityUserManager.GetByIdAsync(CurrentUser.GetId());
             if (identityUser.Equals(null))
             {
-                throw new ArgumentNullException("Who Are You Please SignIn");
+                throw new UserFriendlyException("Who Are You Please SignIn");
             }
             var roles = await _identityUserManager.GetRolesAsync(identityUser);
 

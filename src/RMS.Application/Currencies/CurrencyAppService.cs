@@ -72,7 +72,7 @@ namespace RMS.Currencies
             var existingCurrency = _currencyRepository.FindByNameAndSymbolAsync(input.Name, input.Symbol).Result;
             if (existingCurrency != null)
             {
-                throw new CurrencyAlreadyExistsException(existingCurrency.Name);
+                throw new UserFriendlyException("Currency Exist Befor");
             }
             return base.CreateAsync(input);
         }
@@ -94,7 +94,7 @@ namespace RMS.Currencies
             if ((existingCurrency != null && !existingCurrency.Name.Contains(input.Name))
                || (existingCurrency != null && !existingCurrency.Symbol.Contains(input.Symbol)))
             {
-                throw new CurrencyAlreadyExistsException(existingCurrency.Name);
+                throw new UserFriendlyException("Currency Exist Befor");
             }
             return await base.UpdateAsync(id, input);
         }

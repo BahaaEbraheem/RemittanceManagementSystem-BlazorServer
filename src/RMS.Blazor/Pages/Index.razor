@@ -7,13 +7,24 @@
 
 <style>
     body {  
-background-image: url('r (2).png');
-}
+        background-image: url('r (2).png');
+        background-color: rgba(var(--bs-light-rgb), var(--bs-bg-opacity)) !important;
+    }
+    .bg-light{
+        --bs-bg-opacity: 1;
+        background-color: rgba(var(--bs-light-rgb), var(--bs-bg-opacity)) !important;
+    }
+
+    .container{
+
+    }
+/*background-image: url('r (2).png');*/
+
 
 </style>
 
-<body>
-<div class="container">
+@*<body>
+*@<div class="container">
     <div class="p-5 text-center">
         <Badge Color="Color.Success" class="mb-4">
             <h5 class="m-1"> <i class="fas fa-rocket"></i> Congratulations, <strong>RMS</strong> is successfully running!</h5>
@@ -28,9 +39,9 @@ background-image: url('r (2).png');
 <a class="btn btn-primary" href="Account/Login"><i class="fa fa-sign-in"></i> @L["Login"]</a>
         }
     </div>
-    </div>
-</body>
-
+   </div>
+@*   </body>
+*@
 
 
 
